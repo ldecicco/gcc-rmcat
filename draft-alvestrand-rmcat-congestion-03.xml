@@ -159,7 +159,7 @@
           flow on which congestion is discovered</t>
 
           <t>The encodings are usually sensitive to packet loss, while the
-          real time requirement precludes the repair of packet loss by
+          real-time requirement precludes the repair of packet loss by
           retransmission</t>
         </list>This memo describes two congestion control algorithms that
       together are seen to give good performance and reasonable 
