@@ -252,13 +252,13 @@
     </section>
 
     <section anchor="receiverside" title="Receiver side control">
-      <t>The receive-side algorithm can be further decomposed into four parts:
+      <t>The receiver side control algorithm can be further decomposed into four parts:
       an RTP timestamp to NTP time conversion, arrival-time filter, an
       over-use detector, and a remote rate-control.</t>
 
       <t></t>
 
-      <section title="Procsesing multiple streams using RTP timestamp to NTP time conversion">
+      <section title="Processing multiple streams using RTP timestamp to NTP time conversion">
         <t>It is common that multiple RTP streams are sent from the sender to
         the receiver. In such a situation the RTP timestamps of incoming can
         first be converted to a common time base using the RTP timestamp and
@@ -323,7 +323,7 @@
         <figure>
           <artwork><![CDATA[ 
            L(i)-L(i-1)
-  d(i) = -------------- + w(i) = dL(i)/C+w(i)
+  d(i) = -------------- + w(i) = dL(i)/C + w(i)
                C
 
 ]]></artwork>
