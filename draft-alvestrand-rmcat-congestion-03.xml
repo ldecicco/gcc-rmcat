@@ -439,11 +439,11 @@
 
   theta_hat(i) = theta_hat(i-1) + z(i) * k_bar(i)
 
-                           E(i-1) * h_bar(i)
-  k_bar(i) = --------------------------------------------
-               var_v_hat + h_bar(i)^T * E(i-1) * h_bar(i)
+                    ( E(i-1) + Q(i) ) * h_bar(i)
+  k_bar(i) = ---------------------------------------------------
+             var_v_hat + h_bar(i)^T * (E(i-1) + Q(i)) * h_bar(i)
 
-  E(i) = (I - K_bar(i) * h_bar(i)^T) * E(i-1) + Q(i)
+  E(i) = (I - K_bar(i) * h_bar(i)^T) * ( E(i-1) + Q(i) )
 ]]></artwork>
         </figure>
 
@@ -467,7 +467,7 @@
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
         should be zero mean WGN is less accurate in some cases, we have
         introduced an additional outlier filter around the updates of
-        var_v_hat. If z(i) &gt; 3 var_v_hat the filter is updated with 3
+        var_v_hat. If z(i) &gt; 3 sqrt(var_v_hat) the filter is updated with 3
         sqrt(var_v_hat) rather than z(i). For instance v(i) will not be white
         in situations where packets are sent at a higher rate than the channel
         capacity, in which case they will be queued behind each other. In a
