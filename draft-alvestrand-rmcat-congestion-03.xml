@@ -370,8 +370,8 @@
       <section title="Arrival-time filter">
         <t>The parameters d(i) and dL(i) are readily available for each frame
         i &gt; 1, and we want to estimate C(i) and m(i) and use those
-        estimates to detect whether or not we are over-using the bandwidth
-        currently available. These parameters are easily estimated by any
+        estimates to detect whether or not the bottleneck link is 
+        over-used. These parameters can be estimated by any
         adaptive filter &ndash; we are using the Kalman filter.</t>
 
         <t>Let</t>
@@ -382,7 +382,7 @@
 ]]></artwork>
         </figure>
 
-        <t>and call it the state of time i. We model the state evolution from
+        <t>and call it the state at time i. We model the state evolution from
         time i to time i+1 as</t>
 
         <t></t>
@@ -393,7 +393,8 @@
 ]]></artwork>
         </figure>
 
-        <t>where u_bar(i) is the zero mean white Gaussian process noise with
+        <t>where u_bar(i) is the state noise that we model as a stationary 
+          process with Gaussian statistic with a zero mean and a
         covariance</t>
 
         <t></t>
