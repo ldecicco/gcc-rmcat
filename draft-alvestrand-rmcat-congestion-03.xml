@@ -162,9 +162,9 @@
           real time requirement precludes the repair of packet loss by
           retransmission</t>
         </list>This memo describes two congestion control algorithms that
-      together are seen to give reasonable performance and reasonable (not
-      perfect) bandwidth sharing with other conferences and with TCP-using
-      applications that share the same links.</t>
+      together are seen to give good performance and reasonable 
+      bandwidth sharing with other video flows using the same congestion control
+      and with TCP flows that share the same links.</t>
 
       <t>The signaling used consists of standard RTP timestamps <xref
       target="RFC3550"></xref> possibly augmented with RTP transmission time
