@@ -599,7 +599,7 @@ Under-use    |           |Hold        |Hold
 
         <t>Since the system depends on over-using the channel to verify the
         current available bandwidth estimate, we must make sure that our
-        estimate doesn't diverge from the rate at which the sender is actually
+        estimate does not diverge from the rate at which the sender is actually
         sending. Thus, if the sender is unable to produce a bit stream with
         the bit rate the receiver is asking for, the available bandwidth
         estimate must stay within a given bound. Therefore we introduce a
@@ -695,7 +695,7 @@ Under-use    |           |Hold        |Hold
       <t>The available bandwidth estimates produced by the receiving side are
       only reliable when the size of the queues along the channel are large
       enough. If the queues are very short, over-use will only be visible
-      through packet losses, which aren't used by the receiving side
+      through packet losses, which are not used by the receiving side
       algorithm.</t>
 
       <t>This algorithm is run every time a receive report arrives at the
@@ -835,11 +835,11 @@ As(i) <= A(i)
           processed) delay info and let the sender run the algorithm.</t>
 
           <t>Considerations of over-bandwidth estimation: Whether we can use
-          the estimate of how much we're over bandwidth in section 3 to
+          the estimate of how much we are over bandwidth in section 3 to
           influence how much we reduce the bandwidth, rather than using a
           fixed factor.</t>
 
-          <t>Startup considerations. It's unreasonable to assume that just
+          <t>Startup considerations. It is unreasonable to assume that just
           starting at full rate is always the best strategy.</t>
 
           <t>Dealing with sender traffic shaping, which delays sending of
