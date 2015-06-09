@@ -217,7 +217,7 @@
           the RTP timestamp if the transmission time offset field is not
           present.</t>
 
-          <t>Incoming media streams - a stream of frames consisting of RTP
+          <t>Incoming media stream - a stream of frames consisting of RTP
           packets.</t>
 
           <t>Media codec - has a bandwidth control, and encodes the incoming
