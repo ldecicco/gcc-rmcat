@@ -10,7 +10,7 @@
 <?rfc inline="yes"?>
 <?rfc compact="yes"?>
 <?rfc subcompact="no"?>
-<rfc category="info" docName="draft-alvestrand-rmcat-congestion-01"
+<rfc category="info" docName="draft-alvestrand-rmcat-congestion-03"
      ipr="trust200902">
   <front>
     <title abbrev="Congestion Control for RTCWEB">A Google Congestion Control
@@ -49,7 +49,23 @@
         <email>holmer@google.com</email>
       </address>
     </author>
+    <author fullname="Gaetano Carlucci" initials="G." surname="Carlucci">
+         <organization>Politecnico di Bari</organization> 
 
+          <address>
+            <postal>
+              <street>Via Orabona, 4</street>
+
+              <code>70125</code>
+
+              <city>Bari</code>
+
+              <country>Italy</country>
+            </postal>
+
+            <email>gaetano.carlucci@poliba.it</email>
+           </address> 
+    </author>
     <author fullname="Luca De Cicco" initials="L." surname="De Cicco">
          <organization>Politecnico di Bari</organization> 
 
@@ -521,8 +537,8 @@
       <section title="Rate control">
         <t>The rate control at the receiving side is designed to increase the
         receive-side estimate of the available bandwidth A_hat as long as the
-        detected state is normal. Doing that assures that we, sooner or later,
-        will reach the available bandwidth of the channel and detect an
+        detected state is normal. Doing that ensures that we will eventually 
+        match the available bandwidth of the channel and detect an
         over-use.</t>
 
         <t>As soon as over-use has been detected the receive-side estimate of
