@@ -224,10 +224,10 @@
           media stream into an RTP stream.</t>
 
           <t>RTP sender - sends the RTP stream over the network to the RTP
-          receiver. Generates the RTP timestamp.</t>
+          receiver. It generates the RTP timestamp.</t>
 
           <t>RTP receiver - receives the RTP stream, notes the time of
-          arrival. Regenerates the media stream for the recipient.</t>
+          arrival. It regenerates the media stream for the recipient.</t>
 
           <t>RTCP sender at RTP sender - sends sender reports with mappings
           between RTP timestamps and NTP time.</t>
