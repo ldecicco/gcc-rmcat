@@ -882,9 +882,10 @@ As(i) <= A(i)
 
     <section anchor="Security" title="Security Considerations">
       <t>An attacker with the ability to insert or remove messages on the
-      connection will, of course, have the ability to mess up rate control,
-      causing people to send either too fast or too slow, and causing
-      congestion.</t>
+      connection would have the ability to disrupt rate control.
+      This could make the algorithm to produce either a sending rate 
+      under-utilizing the bottleneck link capacity, or a too high sending rate  
+      causing network congestion.</t>
 
       <t>In this case, the control information is carried inside RTP, and can
       be protected against modification or message insertion using SRTP, just
