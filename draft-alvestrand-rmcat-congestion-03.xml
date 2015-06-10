@@ -287,26 +287,43 @@
       <section title="Arrival-time model">
         <t>This section describes an adaptive filter that continuously updates
         estimates of network parameters based on the timing of the received
-        frames.</t>
+        packets.</t>
 
-        <t>At the receiving side we are observing groups of incoming packets,
-        where each group of packets corresponding to the same frame having
-        timestamp T(i).</t>
-
-        <t>Each frame is assigned a receive time t(i), which corresponds to
-        the time at which the whole frame has been received (ignoring any
-        packet losses). A frame is delayed relative to its predecessor if
-        t(i)-t(i-1)&gt;T(i)-T(i-1), i.e., if the arrival time difference is
-        larger than the timestamp difference.</t>
-
-        <t>We define the (relative) inter-arrival time, d(i) as</t>
-
+        <t>We define the inter-arrival time, t(i)-t(i-1), as the difference in
+        arrival time of two packets, or two groups of packets. Correspondingly,
+        the inter-send time, T(i)-T(i-1), is defined as the difference in send-
+        time of two packets of two groups of packets. Finally, the relative
+        inter-arrival time, d(i) is defined as the difference between the
+        inter-arrival time and the inter-send time, or:</t>
         <figure>
           <artwork><![CDATA[ 
   d(i) = t(i)-t(i-1)-(T(i)-T(i-1))
 
 ]]></artwork>
         </figure>
+
+        <t>At the receiving side we are observing groups of incoming packets,
+        where a group of packets is defined as follows:</t>
+
+        <t><list style="symbols">
+          <t>A sequence of packets which have inter-send times which are less
+          than or equal to 5 ms constitute a group.</t>
+
+          <t>In addition, any packet which has an inter-arrival time less
+          than 5 ms, and a relative inter-arrival time less than 0 is also
+          considered being part of the current group of packets.</t>
+        </list></t>
+
+        <t>An inter-send time is computed between consecutive groups as
+        T(i) - T(i-1), where T(i) is the send timestamp of the last packet
+        in the current packet group being processed. Any packets received
+        out of order are ignored by the arrival-time model.</t>
+
+        <t>Each group is assigned a receive time t(i), which corresponds to
+        the time at which the last packet of the group was received. A group
+        is delayed relative to its predecessor if
+        t(i)-t(i-1)&gt;T(i)-T(i-1), i.e., if the inter-arrival time is
+        larger than the inter-send time.</t>
 
         <t>Since the time ts to send a frame of size L over a path with a
         capacity of C is roughly</t>
@@ -318,7 +335,7 @@
 ]]></artwork>
         </figure>
 
-        <t>we can model the inter-arrival time as</t>
+        <t>we can model the relative inter-arrival time as</t>
 
         <figure>
           <artwork><![CDATA[ 
@@ -1019,7 +1036,7 @@ As(i) <= A(i)
         <t><list style="symbols">
             <t>Added Luca De Cicco and Saverio Mascolo as authors.</t>
 
-            <t>Extended the “Over-use detector” section with new technical 
+            <t>Extended the "Over-use detector" section with new technical
              details on how to dynamically tune the offset gamma_1 for improved
              fairness properties.</t>
 
