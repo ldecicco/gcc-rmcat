@@ -478,7 +478,7 @@
 ]]></artwork>
         </figure>
 
-        <t>where f_max = max {1/(T(j) - T(j-1))} for j in i-K+1...i is the
+        <t>where f_max = max {1/(T(j) - T(j-1))} for j in i-K+1,...,i is the
         highest rate at which frames have been captured by the camera the last
         K frames and alpha is a filter coefficient typically chosen as a
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
