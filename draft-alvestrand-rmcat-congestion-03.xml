@@ -311,7 +311,11 @@
 
           <t>In addition, any packet which has an inter-arrival time less
           than 5 ms, and a relative inter-arrival time less than 0 is also
-          considered being part of the current group of packets.</t>
+          considered being part of the current group of packets. The reasoning
+          behind including these packets in the group is to better handle
+          delay transients, caused by packets being queued up for reasons
+          unrelated to congestion. As an example this can be seen to happen
+          on many Wi-Fi and wireless networks.</t>
         </list></t>
 
         <t>An inter-send time is computed between consecutive groups as
@@ -325,8 +329,8 @@
         t(i)-t(i-1)&gt;T(i)-T(i-1), i.e., if the inter-arrival time is
         larger than the inter-send time.</t>
 
-        <t>Since the time ts to send a frame of size L over a path with a
-        capacity of C is roughly</t>
+        <t>Since the time ts to send a group of packets of size L over a path
+        with a capacity of C is roughly</t>
 
         <figure>
           <artwork><![CDATA[
@@ -366,9 +370,10 @@
         </figure>
 
         <t>This is our fundamental model, where we take into account that a
-        large frame needs more time to traverse the link than a small frame,
-        thus arriving with higher relative delay. The noise term represents
-        network jitter and other delay effects not captured by the model.</t>
+        large group of packets need more time to traverse the link than a small
+        group, thus arriving with higher relative delay. The noise term
+        represents network jitter and other delay effects not captured by the
+        model.</t>
 
         <t>When graphing the values for d(i) versus dL(i) on a scatterplot, we
         find that most samples cluster around the center, and the outliers are
@@ -385,8 +390,8 @@
       </section>
 
       <section title="Arrival-time filter">
-        <t>The parameters d(i) and dL(i) are readily available for each frame
-        i &gt; 1, and we want to estimate C(i) and m(i) and use those
+        <t>The parameters d(i) and dL(i) are readily available for each group
+        of packets i &gt; 1, and we want to estimate C(i) and m(i) and use those
         estimates to detect whether or not the bottleneck link is 
         over-used. These parameters can be estimated by any
         adaptive filter &ndash; we are using the Kalman filter.</t>
@@ -493,7 +498,7 @@
 
         <figure>
           <artwork><![CDATA[
-  diag(Q(i)) = 30/(1000 * f_max)[10^-10 10^-2]^T
+  diag(Q(i)) = [10^-13 10^-3]^T
 ]]></artwork>
         </figure>
 
