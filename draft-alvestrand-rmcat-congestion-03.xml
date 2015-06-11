@@ -483,7 +483,7 @@
 ]]></artwork>
         </figure>
 
-        <t>where f_max = max {1/(T(j) - T(j-1))} for j in i-K+1...i is the
+        <t>where f_max = max {1/(T(j) - T(j-1))} for j in i-K+1,...,i is the
         highest rate at which frames have been captured by the camera the last
         K frames and alpha is a filter coefficient typically chosen as a
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
@@ -711,20 +711,20 @@ Under-use    |           |Hold        |Hold
     </section>
 
     <section anchor="senderside" title="Sender side control">
-      <t>An additional congestion controller resides at the sending side. It
+      <t>An additional congestion controller is placed at the sender. It
       bases its decisions on the round-trip time, packet loss and available
-      bandwidth estimates transmitted from the receiving side.</t>
+      bandwidth estimates transmitted from the receiver.</t>
 
-      <t>The available bandwidth estimates produced by the receiving side are
-      only reliable when the size of the queues along the channel are large
+      <t>The available bandwidth estimates A_hat produced by the receiver are
+      only reliable when the size of the queues along the path are large
       enough. If the queues are very short, over-use will only be visible
       through packet losses, which are not used by the receiving side
       algorithm.</t>
 
-      <t>This algorithm is run every time a receive report arrives at the
+      <t>The sender side algorithm is run every time a receive report arrives at the
       sender, which will happen no more often than t_min_fb_interval, and no
       less often than t_max_fb_interval. If no receive report is received
-      within 2x t_max_fb_interval (indicating at least 2 lost feedback
+      within twice t_max_fb_interval (indicating at least 2 lost feedback
       reports), the algorithm will take action as if all packets in the
       interval have been lost, resulting in a halving of the send rate.</t>
 
@@ -770,8 +770,8 @@ As(i) <= A(i)
       <t>We motivate the packet loss thresholds by noting that if the
       transmission channel has a small amount of packet loss due to over-use,
       that amount will soon increase if the sender does not adjust his bit
-      rate. Therefore we will soon enough reach above the 10 % threshold and
-      adjust As(i). However if the packet loss rate does not increase, the
+      rate. Therefore we will soon enough reach above the 10% threshold and
+      adjust As(i). However, if the packet loss rate does not increase, the
       losses are probably not related to self-induced channel over-use and
       therefore we should not react on them.</t>
     </section>
@@ -802,12 +802,11 @@ As(i) <= A(i)
       enough that the system switches back to the receiver-controlled
       state.</t>
 
-      <t>In the case where sender only implements, we expect to see somewhat
-      higher loss rates and delays, but the system will still be overall TCP
-      friendly and self-adjusting; the governing term in the calculation will
-      be the TFRC formula.</t>
+      <t>In the case where sender only implements this algorithm, we expect
+      to see somewhat higher loss rates and delays, but the system will still
+      be overall TCP friendly and self-adjusting; the governing term in the calculation will be the TFRC formula.</t>
 
-      <t>In the case where recipient implements this algorithm and sender does
+      <t>In the case where the receiver implements this algorithm and sender does
       not, congestion will be avoided for slow changes as long as the sender
       understands and obeys TMMBR/REMB; there will be no backoff for
       packet-loss-inducing changes in capacity. Given that some kind of
@@ -888,9 +887,10 @@ As(i) <= A(i)
 
     <section anchor="Security" title="Security Considerations">
       <t>An attacker with the ability to insert or remove messages on the
-      connection will, of course, have the ability to mess up rate control,
-      causing people to send either too fast or too slow, and causing
-      congestion.</t>
+      connection would have the ability to disrupt rate control.
+      This could make the algorithm to produce either a sending rate 
+      under-utilizing the bottleneck link capacity, or a too high sending rate  
+      causing network congestion.</t>
 
       <t>In this case, the control information is carried inside RTP, and can
       be protected against modification or message insertion using SRTP, just
