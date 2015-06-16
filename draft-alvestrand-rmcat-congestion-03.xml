@@ -23,9 +23,9 @@
         <postal>
           <street>Kungsbron 2</street>
 
-          <city>Stockholm</city>
-
           <code>11122</code>
+
+          <city>Stockholm</city>
 
           <country>Sweden</country>
         </postal>
@@ -39,9 +39,9 @@
         <postal>
           <street>Kungsbron 2</street>
 
-          <city>Stockholm</city>
-
           <code>11122</code>
+
+          <city>Stockholm</city>
 
           <country>Sweden</country>
         </postal>
@@ -58,7 +58,7 @@
 
               <code>70125</code>
 
-              <city>Bari</code>
+              <city>Bari</city>
 
               <country>Italy</country>
             </postal>
@@ -75,7 +75,7 @@
 
               <code>70125</code>
 
-              <city>Bari</code>
+              <city>Bari</city>
 
               <country>Italy</country>
             </postal>
@@ -93,7 +93,7 @@
 
               <code>70125</code>
 
-              <city>Bari</code>
+              <city>Bari</city>
 
               <country>Italy</country>
             </postal>
@@ -110,9 +110,9 @@
         <postal>
           <street>Kungsbron 2</street>
 
-          <city>Stockholm</city>
-
           <code>11122</code>
+
+          <city>Stockholm</city>
 
           <country>Sweden</country>
         </postal>
@@ -166,13 +166,9 @@
       bandwidth sharing with other video flows using the same congestion control
       and with TCP flows that share the same links.</t>
 
-      <t>The signaling used consists of standard RTP timestamps <xref
-      target="RFC3550"></xref> possibly augmented with RTP transmission time
-      offsets <xref target="RFC5450"></xref>, standard RTCP feedback reports
-      and Temporary Maximum Media Stream Bit Rate Requests (TMMBR) as defined
-      in <xref target="RFC5104"></xref> section 3.5.4, or by using the REMB
-      feedback report defined in <xref
-      target="I-D.alvestrand-rmcat-remb"></xref></t>
+      <t>The signaling used consists of experimental RTP header extensions
+      and RTCP messages as defined in <xref target="abs-send-time"></xref>, <xref
+      target="I-D.alvestrand-rmcat-remb"></xref> and <xref target="I-D.holmer-rmcat-transport-wide-cc-extensions"/>.</t>
 
       <t></t>
 
@@ -210,79 +206,83 @@
       <t><list style="symbols">
           <t>RTP packet - an RTP packet containing media data.</t>
 
-          <t>Frame - a set of RTP packets transmitted from the sender at the
-          same time instant. This could be a video frame, an audio frame, or a
-          mix of audio and video packets. A frame can be defined by the RTP
-          packet send time (RTP timestamp + transmission time offset), or by
-          the RTP timestamp if the transmission time offset field is not
-          present.</t>
+          <t>Packet group - a set of RTP packets transmitted from the sender at
+          the same time instant. This could be video packets, an audio packets,
+          or a mix of audio and video packets. A group of packets is be defined
+          by the packets send and arrival time (absolute send time).</t>
 
           <t>Incoming media stream - a stream of frames consisting of RTP
           packets.</t>
 
-          <t>Media codec - has a bandwidth control, and encodes the incoming
-          media stream into an RTP stream.</t>
-
           <t>RTP sender - sends the RTP stream over the network to the RTP
           receiver. It generates the RTP timestamp.</t>
 
-          <t>RTP receiver - receives the RTP stream, notes the time of
-          arrival. It regenerates the media stream for the recipient.</t>
+          <t>RTP receiver - receives the RTP stream, marks the time of
+          arrival.</t>
 
-          <t>RTCP sender at RTP sender - sends sender reports with mappings
-          between RTP timestamps and NTP time.</t>
-
-          <t>RTCP sender at RTP receiver - sends receiver reports and
-          TMMBR/REMB messages.</t>
+          <t>RTCP sender at RTP receiver - sends receiver reports,
+          REMB messages and transport-wide RTCP feedback messages.</t>
 
           <t>RTCP receiver at RTP sender - receives receiver reports and
-          TMMBR/REMB messages, reports these to sender side control.</t>
+          REMB messages and transport-wide RTCP feedback messages,
+          reports these to sender side control.</t>
 
           <t>RTCP receiver at RTP receiver.</t>
 
-          <t>Sender side control - takes loss rate info, round trip time info,
-          and TMMBR/REMB messages and computes a sending bitrate.</t>
+          <t>Loss-based control - takes loss rate info, round trip time info,
+          and REMB messages and computes a sending bitrate.</t>
 
-          <t>Receiver side control - takes the packet arrival info at the RTP
-          receiver and decides when to send TMMBR/REMB messages.</t>
-        </list>Together, sender side control and receiver side control
+          <t>Delay-based control - takes the packet arrival info, either at the
+          RTP receiver, or from the feedback received by the RTP sender, and
+          computes a maximum bitrate which it passes to the loss-based
+          control.</t>
+        </list>Together, loss-based control and delay-based control
       implement the congestion control algorithm.</t>
 
       <t></t>
     </section>
 
-    <section anchor="receiverside" title="Receiver side control">
-      <t>The receiver side control algorithm can be further decomposed into four parts:
-      an RTP timestamp to NTP time conversion, arrival-time filter, an
-      over-use detector, and a remote rate-control.</t>
+    <section anchor="extensions" title="Feedback and extensions">
+      <t>There are two ways of implementing the proposed algorithm. One where
+      the both controllers are running at the send-side, and one where the
+      delay-based controller runs on the receive-side and the loss-based
+      controller runs on the send-side.
+      </t>
+
+      <t>The first version can be realized by using a per-packet feedback
+      protocol as described in
+      <xref target="I-D.holmer-rmcat-transport-wide-cc-extensions"/>. Here,
+      the RTP receiver will record the arrival time and the transport-wide
+      sequence number of each received packet, which will be sent back to
+      the sender periodically using the transport-wide feedback message. The
+      suggested feedback interval is once per received video frame, but if the
+      feedback overhead needs to be limited this interval can be increased to
+      once every 100 ms.</t>
+
+      <t>The sender will map the received {sequence number, arrival time} pairs
+      to the send-time of each packet covered by the feedback report, and feed
+      those timestamps to the delay-based control. It will also compute a loss
+      ratio based on the sequence numbers in the feedback message.</t>
+
+      <t>The second version can be realized by having a delay-based controller
+      at the receive-side, monitoring and processing the arrival time and size
+      of incoming packets. The sender should use the abs-send-time RTP header
+      extension <xref target="abs-send-time"></xref> to enable the receiver to
+      compute the inter-group delay variation. The output from the delay-based
+      controller will be a bitrate, which will be sent back to the sender using
+      the REMB feedback message
+      <xref target="I-D.alvestrand-rmcat-remb"></xref>.
+      The packet loss ratio is sent back via RTCP receiver reports. At the
+      sender the bitrate in the REMB message and the fraction of packets lost
+      are fed into the loss-based controller, which outputs a final target
+      bitrate.</t>
+    </section>
+
+    <section anchor="delaybased" title="Delay-based control">
+      <t>The delay-based control algorithm can be further decomposed into three parts:
+      an arrival-time filter, an over-use detector, and a rate controller.</t>
 
       <t></t>
-
-      <section title="Processing multiple streams using RTP timestamp to NTP time conversion">
-        <t>It is common that multiple RTP streams are sent from the sender to
-        the receiver. In such a situation the RTP timestamps of incoming can
-        first be converted to a common time base using the RTP timestamp and
-        NTP time pairs in RTCP SR reports<xref target="RFC3550"></xref>. The
-        converted timestamps can then be used instead of RTP timestamps in the
-        arrival-time filtering, and since all streams from the same sender
-        have timestamps in the same time base they can all be processed by the
-        same filter. This has the advantage of quicker reactions and reduces
-        problems of noisy measurements due to self-inflicted
-        cross-traffic.</t>
-
-        <t>In the time interval from the start of the call until a stream from
-        the same sender has received an RTCP SR report, the receiver-side
-        control operates in single-stream mode. In that mode only one RTP
-        stream can be processed by the over-use detector. As soon as a stream
-        has received one or more RTCP SR reports the receiver-side control can
-        change to a multi-stream mode, where all RTP streams from the same
-        sender which have received one or more RTCP SR reports can be
-        processed by the over-use detector. When switching to the multi-stream
-        mode the state of the over-use detector must be modified to avoid a
-        time base mismatch. This can either be done by resetting the stored
-        RTP timestamp values or by converting them using the newly received
-        RTCP SR report.</t>
-      </section>
 
       <section title="Arrival-time model">
         <t>This section describes an adaptive filter that continuously updates
@@ -292,9 +292,10 @@
         <t>We define the inter-arrival time, t(i)-t(i-1), as the difference in
         arrival time of two packets, or two groups of packets. Correspondingly,
         the inter-send time, T(i)-T(i-1), is defined as the difference in send-
-        time of two packets of two groups of packets. Finally, the relative
-        inter-arrival time, d(i) is defined as the difference between the
-        inter-arrival time and the inter-send time, or:</t>
+        time of two packets of two groups of packets. Finally, the inter-group
+        delay variation, d(i), is defined as the difference between the
+        inter-arrival time and the inter-send time. Or interpreted differently,
+        as the difference between the delay of frame i and frame i-1.</t>
         <figure>
           <artwork><![CDATA[ 
   d(i) = t(i)-t(i-1)-(T(i)-T(i-1))
@@ -310,7 +311,7 @@
           than or equal to 5 ms constitute a group.</t>
 
           <t>In addition, any packet which has an inter-arrival time less
-          than 5 ms, and a relative inter-arrival time less than 0 is also
+          than 5 ms, and an inter-group delay variation less than 0 is also
           considered being part of the current group of packets. The reasoning
           behind including these packets in the group is to better handle
           delay transients, caused by packets being queued up for reasons
@@ -330,7 +331,7 @@
         larger than the inter-send time.</t>
 
         <t>Since the time ts to send a group of packets of size L over a path
-        with a capacity of C is roughly</t>
+        with a capacity of C(i) is roughly</t>
 
         <figure>
           <artwork><![CDATA[
@@ -339,19 +340,19 @@
 ]]></artwork>
         </figure>
 
-        <t>we can model the relative inter-arrival time as</t>
+        <t>we can model the inter-group delay variation as:</t>
 
         <figure>
           <artwork><![CDATA[ 
            L(i)-L(i-1)
   d(i) = -------------- + w(i) = dL(i)/C + w(i)
-               C
+               C(i)
 
 ]]></artwork>
         </figure>
 
         <t>Here, w(i) is a sample from a stochastic process W, which is a
-        function of the capacity C, the current cross traffic X(i), and the
+        function of the capacity C(i), the current cross traffic X(i), and the
         current send bit rate R(i). We model W as a white Gaussian process. If
         we are over-using the channel we expect w(i) to increase, and if a
         queue on the network path is being emptied, w(i) will decrease;
@@ -364,7 +365,7 @@
           <preamble>Equation 5</preamble>
 
           <artwork><![CDATA[
-  d(i) = dL(i)/C + m(i) + v(i)
+  d(i) = dL(i)/C(i) + m(i) + v(i)
 
 ]]></artwork>
         </figure>
@@ -377,7 +378,7 @@
 
         <t>When graphing the values for d(i) versus dL(i) on a scatterplot, we
         find that most samples cluster around the center, and the outliers are
-        clustered along a line with average slope 1/C and zero offset.</t>
+        clustered along a line with average slope 1/C(i) and zero offset.</t>
 
         <t>For instance, when using a regular video codec, most frames are
         roughly the same size after encoding (the central
@@ -624,9 +625,9 @@ Under-use    |           |Hold        |Hold
         current available bandwidth estimate, we must make sure that our
         estimate does not diverge from the rate at which the sender is actually
         sending. Thus, if the sender is unable to produce a bit stream with
-        the bit rate the receiver is asking for, the available bandwidth
-        estimate must stay within a given bound. Therefore we introduce a
-        threshold</t>
+        the bit rate the congestion controller is asking for, the available
+        bandwidth estimate must stay within a given bound. Therefore we
+        introduce a threshold</t>
 
         <figure>
           <artwork><![CDATA[
@@ -634,7 +635,8 @@ Under-use    |           |Hold        |Hold
 ]]></artwork>
         </figure>
 
-        <t>where R_hat(i) is the incoming bit rate measured over a T seconds
+        <t>where R_hat(i) is the incoming bit rate measured at the receiver (or
+        the ACKed bitrate if measured at the sender) over a T seconds
         window:</t>
 
         <figure>
@@ -643,12 +645,11 @@ Under-use    |           |Hold        |Hold
         </figure>
 
         <t>N(i) is the number of frames received the past T seconds and L(j)
-        is the payload size of frame j. Ideally T should be chosen to match
-        the rate controller at the sender. A window between 0.5 and 1 second
+        is the payload size of frame j. A window between 0.5 and 1 second
         is recommended.</t>
 
         <t>When an over-use is detected the system transitions to the decrease
-        state, where the receive-side available bandwidth estimate is
+        state, where the delay-based available bandwidth estimate is
         decreased to a factor times the currently incoming bit rate.</t>
 
         <figure>
@@ -656,7 +657,8 @@ Under-use    |           |Hold        |Hold
   A_hat(i) = alpha*R_hat(i)]]></artwork>
         </figure>
 
-        <t>alpha is typically chosen to be in the interval [0.8, 0.95].</t>
+        <t>alpha is typically chosen to be in the interval [0.8, 0.95], 0.85
+        is the recommended value.</t>
 
         <t>When the detector signals under-use to the rate control subsystem,
         we know that queues in the network path are being emptied, indicating
@@ -667,23 +669,9 @@ Under-use    |           |Hold        |Hold
         stabilize at a lower level &ndash; a way of keeping the delay as low
         as possible. This decrease of delay is wanted, and expected,
         immediately after the estimate has been reduced due to over-use, but
-        can also happen if the cross traffic over some links is reduced. In
-        either case we want to measure the highest incoming rate during the
-        under-use interval:</t>
+        can also happen if the cross traffic over some links is reduced.</t>
 
-        <figure>
-          <artwork><![CDATA[
-  R_max = max{R_hat(i)} for i in 1..K
-
-]]></artwork>
-        </figure>
-
-        <t>where K is the number of frames of under-use before returning to
-        the normal state. R_max is a measure of the actual bandwidth available
-        and is a good guess of what bit rate the sender should be able to
-        transmit at. Therefore the receive-side available bandwidth estimate
-        will be set to R_max when we transition from the hold state to the
-        increase state.</t>
+        <t>TODO(holmer): Remove this section and move it up to the feedback section.</t>
 
         <t>One design decision is when to send rate control messages since this
         limits the responsiveness of the sender to react to congestion.
@@ -710,47 +698,44 @@ Under-use    |           |Hold        |Hold
       </section>
     </section>
 
-    <section anchor="senderside" title="Sender side control">
-      <t>An additional congestion controller is placed at the sender. It
-      bases its decisions on the round-trip time, packet loss and available
-      bandwidth estimates transmitted from the receiver.</t>
+    <section anchor="lossbased" title="Loss-based control">
+      <t>An second part of the congestion controller bases its decisions on the
+      round-trip time, packet loss and available bandwidth estimates received
+      from the delay-based controller.</t>
 
-      <t>The available bandwidth estimates A_hat produced by the receiver are
-      only reliable when the size of the queues along the path are large
-      enough. If the queues are very short, over-use will only be visible
-      through packet losses, which are not used by the receiving side
-      algorithm.</t>
+      <t>The available bandwidth estimates A_hat produced by the delay-based
+      controller are only reliable when the size of the queues along the path
+      are large enough. If the queues are very short, over-use will only be
+      visible through packet losses, which are not used by the delay-based
+      controller.</t>
 
-      <t>The sender side algorithm is run every time a receive report arrives at the
-      sender, which will happen no more often than t_min_fb_interval, and no
-      less often than t_max_fb_interval. If no receive report is received
-      within twice t_max_fb_interval (indicating at least 2 lost feedback
-      reports), the algorithm will take action as if all packets in the
-      interval have been lost, resulting in a halving of the send rate.</t>
+      <t>The loss-based controller should run every time feedback from the
+      receiver is received.</t>
 
       <t><list style="symbols">
           <t>If 2-10% of the packets have been lost since the previous report
-          from the receiver, the sender available bandwidth estimate As(i) (As
-          denotes &lsquo;sender available bandwidth&rsquo;) will be kept
+          from the receiver, the sender available bandwidth estimate As_hat(i)
+          (As_hat denotes &lsquo;sender available bandwidth&rsquo;) will be kept
           unchanged.</t>
 
           <t>If more than 10% of the packets have been lost a new estimate is
-          calculated as As(i)=As(i-1)(1-0.5p), where p is the loss ratio.</t>
+          calculated as As_hat(i)=As_hat(i-1)(1-0.5p), where p is the loss
+          ratio.</t>
 
-          <t>As long as less than 2% of the packets have been lost As(i) will
-          be increased as As(i)=1.05(As(i-1)+1000)</t>
+          <t>As long as less than 2% of the packets have been lost As_hat(i)
+          will be increased as As_hat(i)=1.05(As_hat(i-1)+1000)</t>
         </list></t>
 
-      <t>The new send-side estimate is limited by the TCP Friendly Rate
-      Control formula <xref target="RFC3448"></xref> and the receive-side
-      estimate of the available bandwidth A(i):</t>
+      <t>The new bandwidth estimate is limited by the TCP Friendly Rate
+      Control formula <xref target="RFC3448"></xref> and the delay-based
+      estimate of the available bandwidth A_hat(i):</t>
 
       <figure>
         <artwork><![CDATA[                               8 s
-As(i) >= ----------------------------------------------------------
+As_hat(i) >= ----------------------------------------------------------
          R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8) * p * (1+32*p^2)))
 
-As(i) <= A(i)
+As_hat(i) <= A_hat(i)
 
 ]]></artwork>
       </figure>
@@ -763,16 +748,16 @@ As(i) <= A(i)
       <t>(The multiplication by 8 comes because TFRC is computing bandwidth in
       bytes, while this document computes bandwidth in bits.)</t>
 
-      <t>In words: The sender-side estimate will never be larger than the
-      receiver-side estimate, and will never be lower than the estimate from
+      <t>In words: The loss-based estimate will never be larger than the
+      delay-based estimate, and will never be lower than the estimate from
       the TFRC formula.</t>
 
       <t>We motivate the packet loss thresholds by noting that if the
       transmission channel has a small amount of packet loss due to over-use,
       that amount will soon increase if the sender does not adjust his bit
       rate. Therefore we will soon enough reach above the 10% threshold and
-      adjust As(i). However, if the packet loss rate does not increase, the
-      losses are probably not related to self-induced channel over-use and
+      adjust As_hat(i). However, if the packet loss ratio does not increase, the
+      losses are probably not related to self-inflicted congestion and
       therefore we should not react on them.</t>
     </section>
 
@@ -784,15 +769,15 @@ As(i) <= A(i)
           <t>Both parties implement the algorithms described here</t>
 
           <t>Sender implements the algorithm described in section <xref
-          target="senderside"></xref>, recipient does not implement <xref
-          target="receiverside"></xref></t>
+          target="lossbased"></xref>, recipient does not implement <xref
+          target="delaybased"></xref></t>
 
           <t>Recipient implements the algorithm in section <xref
-          target="receiverside"></xref>, sender does not implement <xref
-          target="senderside"></xref>.</t>
+          target="delaybased"></xref>, sender does not implement <xref
+          target="lossbased"></xref>.</t>
         </list>In the case where both parties implement the algorithms, we
       expect to see most of the congestion control response to slowly varying
-      conditions happen by TMMBR/REMB messages from recipient to sender. At
+      conditions happen by REMB messages from recipient to sender. At
       most times, the sender will send less than the congestion-inducing
       bandwidth limit C, and when he sends more, congestion will be detected
       before packets are lost.</t>
@@ -808,7 +793,7 @@ As(i) <= A(i)
 
       <t>In the case where the receiver implements this algorithm and sender does
       not, congestion will be avoided for slow changes as long as the sender
-      understands and obeys TMMBR/REMB; there will be no backoff for
+      understands and obeys REMB; there will be no backoff for
       packet-loss-inducing changes in capacity. Given that some kind of
       congestion control is mandatory for the sender according to the TMMBR
       spec, this case has to be reevaluated against the specific congestion
@@ -817,7 +802,8 @@ As(i) <= A(i)
 
     <section title="Implementation Experience">
       <t>This algorithm has been implemented in the open-source WebRTC
-      project.</t>
+      project, and has been in use in Chrome since M23, and is being used by
+      Google Hangouts.</t>
     </section>
 
     <section title="Further Work">
@@ -827,52 +813,17 @@ As(i) <= A(i)
       <t>Work that can be done on this basis includes:</t>
 
       <t><list style="symbols">
-          <t>Consideration of timing info: It may be sensible to use the
-          proposed TFRC RTP header extensions <xref
-          target="I-D.gharai-avtcore-rtp-tfrc"></xref> to carry per-packet
-          timing information, which would both give more data points and a
-          timestamp applied closer to the network interface. This draft
-          includes consideration of using the transmission time offset defined
-          in <xref target="RFC5450"></xref></t>
+          <t>Considerations of integrated loss control: How loss and delay
+          control can be better integrated, and the loss control improved.</t>
 
-          <t>Considerations of cross-channel calculation: If all packets in
-          multiple streams follow the same path over the network, congestion
-          or queuing information should be considered across all packets
-          between two parties, not just per media stream. A feedback message
-          (REMB) that may be suitable for such a purpose is given in <xref
-          target="I-D.alvestrand-rmcat-remb"></xref>.</t>
-
-          <t>Considerations of cross-channel balancing: The decision to slow
-          down sending in a situation with multiple media streams should be
-          taken across all media streams, not per stream.</t>
-
-          <t>Considerations of additional input: How and where packet loss
-          detected at the recipient can be added to the algorithm.</t>
-
-          <t>Considerations of locus of control: Whether the sender or the
-          recipient is in the best position to figure out which media streams
-          it makes sense to slow down, and therefore whether one should use
-          TMMBR to slow down one channel, signal an overall bandwidth change
-          and let the sender make the decision, or signal the (possibly
-          processed) delay info and let the sender run the algorithm.</t>
+          <t>Considerations of locus of control: Move the algorithm logic to
+          the sender and evaluate the performance compared to splitting logic
+          between sender and receiver.</t>
 
           <t>Considerations of over-bandwidth estimation: Whether we can use
           the estimate of how much we are over bandwidth in section 3 to
           influence how much we reduce the bandwidth, rather than using a
           fixed factor.</t>
-
-          <t>Startup considerations. It is unreasonable to assume that just
-          starting at full rate is always the best strategy.</t>
-
-          <t>Dealing with sender traffic shaping, which delays sending of
-          packets. Using send-time timestamps rather than RTP timestamps may
-          be useful here, but as long as the sender's traffic shaping does not
-          spread out packets more than the bottleneck link, it should not
-          matter.</t>
-
-          <t>Stability considerations. It is not clear how to show that the
-          algorithm cannot provide an oscillating state, either alone or when
-          competing with other algorithms / flows.</t>
         </list>These are matters for further work; since some of them involve
       extensions that have not yet been standardized, this could take some
       time.</t>
@@ -919,6 +870,16 @@ As(i) <= A(i)
       <?rfc include='reference.RFC.5450'?>
 
       <?rfc include='reference.I-D.alvestrand-rmcat-remb'?>
+
+      <?rfc include='reference.I-D.holmer-rmcat-transport-wide-cc-extensions'?>
+
+      <reference anchor="abs-send-time" target="http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time">
+        <front>
+          <title>abs-send-time header extension</title>
+          <author/>
+          <date/>
+        </front>
+      </reference>
     </references>
 
     <references title="Informative References">
