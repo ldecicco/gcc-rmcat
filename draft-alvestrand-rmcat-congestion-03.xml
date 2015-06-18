@@ -275,7 +275,9 @@
       The packet loss ratio is sent back via RTCP receiver reports. At the
       sender the bitrate in the REMB message and the fraction of packets lost
       are fed into the loss-based controller, which outputs a final target
-      bitrate.</t>
+      bitrate. It is recommended to send the REMB message as soon as congestion
+      is detected if the delay-based controller runs on the receiver, and
+      otherwise at least once every second.</t>
     </section>
 
     <section anchor="delaybased" title="Delay-based control">
@@ -559,13 +561,14 @@
       </section>
 
       <section title="Rate control">
-        <t>The rate control at the receiving side is designed to increase the
-        receive-side estimate of the available bandwidth A_hat as long as the
-        detected state is normal. Doing that ensures that we will eventually 
-        match the available bandwidth of the channel and detect an
-        over-use.</t>
+        <t>The rate control is split in two parts, one controlling the bandwidth
+        estimate based on delay, and one controlling the bandwidth estimate based
+        on loss. Both are designed to increase the estimate of the available 
+        bandwidth A_hat as long as there is no detected congestion. Doing that
+        ensures that we will eventually match the available bandwidth of the 
+        channel and detect an over-use.</t>
 
-        <t>As soon as over-use has been detected the receive-side estimate of
+        <t>As soon as over-use has been detected the receive- estimate of
         the available bandwidth is decreased. In this way we get a recursive
         and adaptive estimate of the available bandwidth.</t>
 
@@ -602,24 +605,47 @@ Under-use    |           |Hold        |Hold
 
         <t>The subsystem starts in the increase state, where it will stay
         until over-use or under-use has been detected by the detector
-        subsystem. On every update the receive-side estimate of the available
-        bandwidth is increased with a factor which is a function of the global
-        system response time and the estimated measurement noise variance
-        var_v_hat. The global system response time is the time from an
-        increase that causes over-use until that over-use can be detected by
-        the over-use detector. The variance var_v_hat affects how responsive
-        the Kalman filter is, and is thus used as an indicator of the delay
-        inflicted by the Kalman filter.</t>
+        subsystem. On every update the delay-based estimate of the available
+        bandwidth is increased, either multiplicatively or additively,
+        depending on its current state.</t>
+
+        <t>The system does a multiplicative
+        increase if the current bandwidth estimate appears to be far from
+        convergence, while it does an additive increase if it appears to
+        be closer to convergence. We assume that we are close to convergence
+        if the currently incoming bitrate, R_hat(i), is close to an average
+        of the incoming bitrates at the time when we were in the Decrease
+        state. "Close" is defined as three standard deviations around this
+        average.</t>
+
+        <t>R_hat(i) is the incoming bit rate measured at the receiver (or
+        the ACKed bitrate if measured at the sender) over a T seconds
+        window:</t>
 
         <figure>
           <artwork><![CDATA[
-  A_hat(i) = eta*A_hat(i-1)
-                                 1.001+B
-  eta(RTT, var_v_hat) = ------------------------------------------
-                           1+e^(b(d*RTT - (c1 * var_v_hat + c2)))]]></artwork>
+  R_hat(i) = 1/T * sum(L(j)) for j from 1 to N(i)]]></artwork>
         </figure>
 
-        <t>Here, B, b, d, c1 and c2 are design parameters.</t>
+        <t>N(i) is the number of packets received the past T seconds and L(j)
+        is the payload size of packet j. A window between 0.5 and 1 second
+        is recommended.</t>
+
+        <t>During multiplicative increase, the estimate is increased with 8%
+        per second, while with additive increase it's increased with half an
+        average packet per response interval. The response interval is estimated
+        as the round-trip time plus 100 ms as an estimate of over-use estimator
+        and detector reaction time.
+
+        <figure>
+          <artwork><![CDATA[
+          alpha = 1.08^min(time_since_last_update, 1.0)
+          A_hat(i) = alpha * A_hat(i-1)
+
+          beta = 0.5 * min(time_since_last_update / response_time, 1.0)
+          A_hat(i) = A_hat(i-1) + beta * avg_packet_size
+          </artwork>
+        </figure>
 
         <t>Since the system depends on over-using the channel to verify the
         current available bandwidth estimate, we must make sure that our
@@ -634,19 +660,6 @@ Under-use    |           |Hold        |Hold
   A_hat(i) < 1.5 * R_hat(i)
 ]]></artwork>
         </figure>
-
-        <t>where R_hat(i) is the incoming bit rate measured at the receiver (or
-        the ACKed bitrate if measured at the sender) over a T seconds
-        window:</t>
-
-        <figure>
-          <artwork><![CDATA[
-  R_hat(i) = 1/T * sum(L(j)) for j from 1 to N(i)]]></artwork>
-        </figure>
-
-        <t>N(i) is the number of frames received the past T seconds and L(j)
-        is the payload size of frame j. A window between 0.5 and 1 second
-        is recommended.</t>
 
         <t>When an over-use is detected the system transitions to the decrease
         state, where the delay-based available bandwidth estimate is
@@ -670,31 +683,6 @@ Under-use    |           |Hold        |Hold
         as possible. This decrease of delay is wanted, and expected,
         immediately after the estimate has been reduced due to over-use, but
         can also happen if the cross traffic over some links is reduced.</t>
-
-        <t>TODO(holmer): Remove this section and move it up to the feedback section.</t>
-
-        <t>One design decision is when to send rate control messages since this
-        limits the responsiveness of the sender to react to congestion.
-        Indeed sending too many
-        messages giving no new information is a waste of bandwidth - but in
-        the case of severe congestion, feedback messages can be lost,
-        resulting in a failure to react in a timely manner.</t>
-
-        <t>The conclusion is that feedback messages should be sent on a
-        "heartbeat" schedule, allowing the sender side control to react to
-        missing feedback messages by reducing its send rate, but they should
-        also be sent whenever the estimated bandwidth value has changed
-        significantly, without waiting for the heartbeat time, up to some
-        limiting upper bound on the send rate.</t>
-
-        <t>The minimum interval is named t_min_fb_interval.</t>
-
-        <t>The maximum interval is named t_max_fb_interval.</t>
-
-        <t>The permissible values of these intervals will be bounded by the
-        RTP session's RTCP bandwidth and its rtcp_frr setting.</t>
-
-        <t>[TODO: Get some example values for these timers]</t>
       </section>
     </section>
 
