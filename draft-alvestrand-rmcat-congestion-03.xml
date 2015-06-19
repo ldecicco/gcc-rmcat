@@ -635,7 +635,7 @@ Under-use    |           |Hold        |Hold
         per second, while with additive increase it's increased with half an
         average packet per response interval. The response interval is estimated
         as the round-trip time plus 100 ms as an estimate of over-use estimator
-        and detector reaction time.
+        and detector reaction time.</t>
 
         <figure>
           <artwork><![CDATA[
