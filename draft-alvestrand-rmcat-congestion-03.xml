@@ -292,12 +292,12 @@
         packets.</t>
 
         <t>We define the inter-arrival time, t(i)-t(i-1), as the difference in
-        arrival time of two packets, or two groups of packets. Correspondingly,
+        arrival time of two packets or two groups of packets. Correspondingly,
         the inter-departure time, T(i)-T(i-1), is defined as the difference in departure-
-        time of two packets of two groups of packets. Finally, the inter-group
+        time of two packets or two groups of packets. Finally, the inter-group
         delay variation, d(i), is defined as the difference between the
         inter-arrival time and the inter-departure time. Or interpreted differently,
-        as the difference between the delay of frame i and frame i-1.</t>
+        as the difference between the delay of group i and group i-1.</t>
         <figure>
           <artwork><![CDATA[ 
   d(i) = t(i)-t(i-1)-(T(i)-T(i-1))
@@ -310,10 +310,11 @@
 
         <t><list style="symbols">
           <t>A sequence of packets which have inter-departure times which are less
-          than or equal to 5 ms constitute a group.</t>
+          than or equal to burst_time constitute a group. Suggested value for burst_time
+          is 5 ms.</t>
 
           <t>In addition, any packet which has an inter-arrival time less
-          than 5 ms, and an inter-group delay variation less than 0 is also
+          than burst_time, and an inter-group delay variation d(i) less than 0 is also
           considered being part of the current group of packets. The reasoning
           behind including these packets in the group is to better handle
           delay transients, caused by packets being queued up for reasons
@@ -333,7 +334,7 @@
         larger than the inter-departure time.</t>
 
         <t>Since the time ts to send a group of packets of size L over a path
-        with a capacity of C(i) is roughly</t>
+        with a capacity of C is roughly</t>
 
         <figure>
           <artwork><![CDATA[
