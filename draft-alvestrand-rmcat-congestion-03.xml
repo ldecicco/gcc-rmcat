@@ -225,18 +225,18 @@
 
           <t>RTCP receiver at RTP sender - receives receiver reports and
           REMB messages and transport-wide RTCP feedback messages,
-          reports these to sender side control.</t>
+          reports these to sender side controller.</t>
 
           <t>RTCP receiver at RTP receiver.</t>
 
-          <t>Loss-based control - takes loss rate info, round trip time info,
+          <t>Loss-based controller - takes loss rate info, round trip time info,
           and REMB messages and computes a sending bitrate.</t>
 
-          <t>Delay-based control - takes the packet arrival info, either at the
+          <t>Delay-based controller - takes the packet arrival info, either at the
           RTP receiver, or from the feedback received by the RTP sender, and
           computes a maximum bitrate which it passes to the loss-based
-          control.</t>
-        </list>Together, loss-based control and delay-based control
+          controller.</t>
+        </list>Together, loss-based controller and delay-based controller
       implement the congestion control algorithm.</t>
 
       <t></t>
@@ -261,7 +261,7 @@
 
       <t>The sender will map the received {sequence number, arrival time} pairs
       to the send-time of each packet covered by the feedback report, and feed
-      those timestamps to the delay-based control. It will also compute a loss
+      those timestamps to the delay-based controller. It will also compute a loss
       ratio based on the sequence numbers in the feedback message.</t>
 
       <t>The second version can be realized by having a delay-based controller
