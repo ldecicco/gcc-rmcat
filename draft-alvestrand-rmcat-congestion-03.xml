@@ -705,7 +705,7 @@ Under-use    |           |Hold        |Hold
           ratio.</t>
 
           <t>As long as less than 2% of the packets have been lost As_hat(i)
-          will be increased as As_hat(i)=1.05(As_hat(i-1)+1000)</t>
+          will be increased as As_hat(i)=1.05(As_hat(i-1))</t>
         </list></t>
 
       <t>The new bandwidth estimate is limited by the TCP Friendly Rate
