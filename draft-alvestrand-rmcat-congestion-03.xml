@@ -206,10 +206,10 @@
       <t><list style="symbols">
           <t>RTP packet - an RTP packet containing media data.</t>
 
-          <t>Packet group - a set of RTP packets transmitted from the sender at
-          the same time instant. This could be video packets, an audio packets,
-          or a mix of audio and video packets. A group of packets is be defined
-          by the packets departure and arrival time (absolute send time).</t>
+          <t>Packet group - a set of RTP packets transmitted from the sender uniquely
+          identified by the group departure and group arrival time (absolute send time)
+          <xref target="abs-send-time"></xref>. These could be video packets, audio packets,
+          or a mix of audio and video packets.</t>
 
           <t>Incoming media stream - a stream of frames consisting of RTP
           packets.</t>
