@@ -533,11 +533,11 @@
         <t>with K(i)=K_d if |m(i)| &lt; gamma_1(i-1) or K(i)=K_u otherwise.
         The rationale is  to increase gamma_1(i) when m(i) is outside of the range 
         [-gamma_1(i-1),gamma_1(i-1)], whereas, when the offset estimate m 
-       falls back into the range, gamma_1 is decreased. In this way when 
+        falls back into the range, gamma_1 is decreased. In this way when 
         m(i) quickly increases, for instance due to a TCP flow entering the same
         bottleneck, gamma_1(i) increases and avoids the uncontrolled generation of
         over-use signals which may lead to starvation of the flow controlled by
-        the proposed algorithm [Dec13].</t>
+        the proposed algorithm <xref target="Pv13"/>.</t>
         <t>On the other hand, when m(i) falls back into the range [-gamma_1(i-1),gamma_1(i-1)]
         the threshold gamma_1(i) is decreased so that a lower queuing delay can
         be achieved.</t>
