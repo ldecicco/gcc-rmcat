@@ -293,8 +293,8 @@
 
         <t>We define the inter-arrival time, t(i)-t(i-1), as the difference in
         arrival time of two packets or two groups of packets. Correspondingly,
-        the inter-departure time, T(i)-T(i-1), is defined as the difference in departure-
-        time of two packets or two groups of packets. Finally, the inter-group
+        the inter-departure time, T(i)-T(i-1), is defined as the difference in 
+        departure-time of two packets or two groups of packets. Finally, the inter-group
         delay variation, d(i), is defined as the difference between the
         inter-arrival time and the inter-departure time. Or interpreted differently,
         as the difference between the delay of group i and group i-1.</t>
@@ -568,7 +568,7 @@
         ensures that we will eventually match the available bandwidth of the 
         channel and detect an over-use.</t>
 
-        <t>As soon as over-use has been detected the receive- estimate of
+        <t>As soon as over-use has been detected the receive-estimate of
         the available bandwidth is decreased. In this way we get a recursive
         and adaptive estimate of the available bandwidth.</t>
 
@@ -618,8 +618,8 @@ Under-use    |           |Hold        |Hold
         state. "Close" is defined as three standard deviations around this
         average.</t>
 
-        <t>R_hat(i) is the incoming bit rate measured at the receiver (or
-        the ACKed bitrate if measured at the sender) over a T seconds
+        <t>R_hat(i) is the incoming bit rate measured by  the delay-based 
+        controller over a T seconds
         window:</t>
 
         <figure>
@@ -632,18 +632,24 @@ Under-use    |           |Hold        |Hold
         is recommended.</t>
 
         <t>During multiplicative increase, the estimate is increased with 8%
-        per second, while with additive increase it's increased with half an
+        per second. </t> 
+
+        <figure>
+          <artwork><![CDATA[
+  eta = 1.08^min(time_since_last_update, 1.0)
+  A_hat(i) = eta * A_hat(i-1)]]>
+          </artwork>
+        </figure>
+
+        <t>During the additive increase the estimate is increased with half an
         average packet per response interval. The response interval is estimated
         as the round-trip time plus 100 ms as an estimate of over-use estimator
         and detector reaction time.</t>
 
         <figure>
           <artwork><![CDATA[
-          alpha = 1.08^min(time_since_last_update, 1.0)
-          A_hat(i) = alpha * A_hat(i-1)
-
-          beta = 0.5 * min(time_since_last_update / response_time, 1.0)
-          A_hat(i) = A_hat(i-1) + beta * avg_packet_size]]>
+  beta = 0.5 * min(time_since_last_update / response_time, 1.0)
+  A_hat(i) = A_hat(i-1) + beta * avg_packet_size]]>
           </artwork>
         </figure>
 
