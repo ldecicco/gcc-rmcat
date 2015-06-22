@@ -806,7 +806,7 @@ As_hat(i) <= A_hat(i)
           the estimate of how much we are over bandwidth in section 3 to
           influence how much we reduce the bandwidth, rather than using a
           fixed factor.</t>
-        </list>
+        </list></t>
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
