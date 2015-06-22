@@ -186,7 +186,7 @@
             conventionally marked by a circumflex accent on top of the
             variable name.</t>
 
-            <t hangText="X(i)">The "i"th value of X - conventionally marked by
+            <t hangText="X(i)">The "i"th value of vector X - conventionally marked by
             a subscript i.</t>
 
             <t hangText="[x y z]">A row vector consisting of elements x, y and
