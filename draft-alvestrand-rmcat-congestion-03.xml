@@ -706,7 +706,7 @@ Under-use    |           |Hold        |Hold
 
       <t>The available bandwidth estimates A_hat produced by the delay-based
       controller are only reliable when the size of the queues along the path
-      sufficiently large enough. If the queues are very short, over-use will only be
+      sufficiently large. If the queues are very short, over-use will only be
       visible through packet losses, which are not used by the delay-based
       controller.</t>
 
