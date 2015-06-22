@@ -209,7 +209,7 @@
           <t>Packet group - a set of RTP packets transmitted from the sender at
           the same time instant. This could be video packets, an audio packets,
           or a mix of audio and video packets. A group of packets is be defined
-          by the packets send and arrival time (absolute send time).</t>
+          by the packets departure and arrival time (absolute send time).</t>
 
           <t>Incoming media stream - a stream of frames consisting of RTP
           packets.</t>
@@ -293,10 +293,10 @@
 
         <t>We define the inter-arrival time, t(i)-t(i-1), as the difference in
         arrival time of two packets, or two groups of packets. Correspondingly,
-        the inter-send time, T(i)-T(i-1), is defined as the difference in send-
+        the inter-departure time, T(i)-T(i-1), is defined as the difference in departure-
         time of two packets of two groups of packets. Finally, the inter-group
         delay variation, d(i), is defined as the difference between the
-        inter-arrival time and the inter-send time. Or interpreted differently,
+        inter-arrival time and the inter-departure time. Or interpreted differently,
         as the difference between the delay of frame i and frame i-1.</t>
         <figure>
           <artwork><![CDATA[ 
@@ -309,7 +309,7 @@
         where a group of packets is defined as follows:</t>
 
         <t><list style="symbols">
-          <t>A sequence of packets which have inter-send times which are less
+          <t>A sequence of packets which have inter-departure times which are less
           than or equal to 5 ms constitute a group.</t>
 
           <t>In addition, any packet which has an inter-arrival time less
@@ -321,8 +321,8 @@
           on many Wi-Fi and wireless networks.</t>
         </list></t>
 
-        <t>An inter-send time is computed between consecutive groups as
-        T(i) - T(i-1), where T(i) is the send timestamp of the last packet
+        <t>An inter-departure time is computed between consecutive groups as
+        T(i) - T(i-1), where T(i) is the departure timestamp of the last packet
         in the current packet group being processed. Any packets received
         out of order are ignored by the arrival-time model.</t>
 
@@ -330,7 +330,7 @@
         the time at which the last packet of the group was received. A group
         is delayed relative to its predecessor if
         t(i)-t(i-1)&gt;T(i)-T(i-1), i.e., if the inter-arrival time is
-        larger than the inter-send time.</t>
+        larger than the inter-departure time.</t>
 
         <t>Since the time ts to send a group of packets of size L over a path
         with a capacity of C(i) is roughly</t>
@@ -355,7 +355,7 @@
 
         <t>Here, w(i) is a sample from a stochastic process W, which is a
         function of the capacity C(i), the current cross traffic X(i), and the
-        current send bit rate R(i). We model W as a white Gaussian process. If
+        current sent bit rate R(i). We model W as a white Gaussian process. If
         we are over-using the channel we expect w(i) to increase, and if a
         queue on the network path is being emptied, w(i) will decrease;
         otherwise the mean of w(i) will be zero.</t>
