@@ -143,11 +143,11 @@
 
   <middle>
     <section title="Introduction">
-      <t>Congestion control is a requirement for all applications that wish to
-      share the Internet <xref target="RFC2914"></xref>.</t>
+      <t>Congestion control is a requirement for all applications sharing
+      the Internet resources <xref target="RFC2914"></xref>.</t>
 
-      <t>The problem of doing congestion control for real-time media is made
-      difficult for a number of reasons:</t>
+      <t>Congestion control for real-time media is challenging
+      for a number of reasons:</t>
 
       <t><list style="symbols">
           <t>The media is usually encoded in forms that cannot be quickly
@@ -162,7 +162,7 @@
           real-time requirement precludes the repair of packet loss by
           retransmission</t>
         </list>This memo describes two congestion control algorithms that
-      together are seen to give good performance and reasonable 
+      together are able to provide good performance and reasonable 
       bandwidth sharing with other video flows using the same congestion control
       and with TCP flows that share the same links.</t>
 
