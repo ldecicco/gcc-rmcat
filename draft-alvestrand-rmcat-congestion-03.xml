@@ -570,8 +570,8 @@
         ensures that we will eventually match the available bandwidth of the 
         channel and detect an over-use.</t>
 
-        <t>As soon as over-use has been detected the receive-estimate of
-        the available bandwidth is decreased. In this way we get a recursive
+        <t>As soon as over-use has been detected, the available bandwidth estimated
+        by the delay-based controller is decreased. In this way we get a recursive
         and adaptive estimate of the available bandwidth.</t>
 
         <t>In this document we make the assumption that the rate control
@@ -698,7 +698,7 @@
 
       <t>The available bandwidth estimates A_hat produced by the delay-based
       controller are only reliable when the size of the queues along the path
-      sufficiently large enough. If the queues are very short, over-use will only be
+      sufficiently large. If the queues are very short, over-use will only be
       visible through packet losses, which are not used by the delay-based
       controller.</t>
 
