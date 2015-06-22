@@ -243,8 +243,8 @@
     </section>
 
     <section anchor="extensions" title="Feedback and extensions">
-      <t>There are two ways of implementing the proposed algorithm. One where
-      the both controllers are running at the send-side, and one where the
+      <t>There are two ways to implement the proposed algorithm. One where
+      both the controllers are running at the send-side, and one where the
       delay-based controller runs on the receive-side and the loss-based
       controller runs on the send-side.
       </t>
