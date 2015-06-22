@@ -872,7 +872,7 @@ As_hat(i) <= A_hat(i)
 
       <reference anchor="abs-send-time" target="http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time">
         <front>
-          <title>abs-send-time header extension</title>
+          <title>RTP Header Extension for Absolute Sender Time</title>
           <author/>
           <date/>
         </front>
