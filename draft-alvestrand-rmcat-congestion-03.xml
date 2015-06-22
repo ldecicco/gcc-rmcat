@@ -564,7 +564,7 @@
         a concurrent TCP flow and prevent starvation as well as enforcing intra-protocol fairness.
         It is worth to notice that k_u(i) belongs to the interval [0.5*K_u, 1.5*K_u] and, similarly,
         k_d(i) belongs to the interval [0.5*K_d, 1.5*K_d].
-        RECOMMENDED values for gamma_1(0), gamma_2, K_u and K_d are respectively 25 ms, 10 ms, 0.02 and 0.006.</t>
+        RECOMMENDED values for gamma_1(0), gamma_2, K_u and K_d are respectively 25 ms, 10 ms, 0.006 and 0.0002.</t>
       </section>
 
       <section title="Rate control">
