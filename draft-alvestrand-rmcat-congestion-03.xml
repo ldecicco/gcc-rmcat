@@ -379,18 +379,6 @@
         represents network jitter and other delay effects not captured by the
         model.</t>
 
-        <t>When graphing the values for d(i) versus dL(i) on a scatterplot, we
-        find that most samples cluster around the center, and the outliers are
-        clustered along a line with average slope 1/C(i) and zero offset.</t>
-
-        <t>For instance, when using a regular video codec, most frames are
-        roughly the same size after encoding (the central
-        &ldquo;cloud&rdquo;); the exceptions are I-frames (or key frames)
-        which are typically much larger than the average causing positive
-        outliers (the I-frame itself) and negative outliers (the frame after
-        an I-frame) on the dL axis. Audio frames on the other hand often
-        consist of single packets of equal size, and an audio-only media
-        stream would have its frames scattered at dL = 0.</t>
       </section>
 
       <section title="Arrival-time filter">
