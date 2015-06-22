@@ -434,6 +434,17 @@
 ]]></artwork>
         </figure>
 
+        <t> Q(i) is chosen as a diagonal matrix with main diagonal
+        elements suggested as:</t>
+
+        <figure>
+          <artwork><![CDATA[
+  diag(Q(i)) = [10^-13 10^-3]^T
+]]></artwork>
+        </figure>
+
+
+
         <t>Given equation 5 we get</t>
 
         <figure>
@@ -496,19 +507,7 @@
         var_v_hat. If z(i) &gt; 3 sqrt(var_v_hat) the filter is updated with 3
         sqrt(var_v_hat) rather than z(i). For instance v(i) will not be white
         in situations where packets are sent at a higher rate than the channel
-        capacity, in which case they will be queued behind each other. In a
-        similar way, Q(i) is chosen as a diagonal matrix with main diagonal
-        elements given by</t>
-
-        <figure>
-          <artwork><![CDATA[
-  diag(Q(i)) = [10^-13 10^-3]^T
-]]></artwork>
-        </figure>
-
-        <t>It is necessary to scale these filter parameters with the frame
-        rate to make the detector respond as quickly at low frame rates as at
-        high frame rates.</t>
+        capacity, in which case they will be queued behind each other.</t>
       </section>
 
       <section title="Over-use detector">
