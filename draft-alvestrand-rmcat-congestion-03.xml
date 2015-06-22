@@ -503,8 +503,8 @@
         An estimate above the threshold is considered as an indication of
         over-use. Such an indication is not enough for the detector to signal
         over-use to the rate control subsystem. Not until over-use has been
-        detected for at least gamma_2 milliseconds and at least gamma_3
-        frames, a definitive over-use will be signaled. However, if the offset
+        detected for at least gamma_2 milliseconds a definitive over-use will be signaled.
+        However, if the offset
         estimate m(i) was decreased in the last update, over-use will not be
         signaled even if all the above conditions are met. Similarly, the
         opposite state, under-use, is detected when m(i) &lt; -gamma_1(i). If
