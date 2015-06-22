@@ -549,8 +549,8 @@
         the threshold gamma_1(i) is decreased so that a lower queuing delay can
         be achieved.</t>
         <t>We suggest to choose k_u(i) &gt; k_d(i) so that the rate at which gamma_1 is
-        increased is higher than the rate at which it is decreased. Morever, to enforce 
-        intra-protocol fairness k_u(i) and k_d(i) are updated according to an average 
+        increased is higher than the rate at which it is decreased. Morever, to enforce
+        intra-protocol fairness k_u(i) and k_d(i) are updated according to an average
         of the incoming bitrates at the receiver R_hat(i):</t>
                 <figure>
            <artwork><![CDATA[
