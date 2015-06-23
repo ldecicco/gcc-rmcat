@@ -482,7 +482,7 @@
         </figure>
 
         <t>where f_max = max {1/(T(j) - T(j-1))} for j in i-K+1,...,i is the
-        highest rate at which last K packet group have been received 
+        highest rate at which the last K packet groups have been received 
         and chi is a filter coefficient typically chosen as a
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
         should be zero mean WGN is less accurate in some cases, we have
