@@ -637,19 +637,33 @@
 
         <figure>
           <artwork><![CDATA[
-  eta = 1.08^min(time_since_last_update, 1.0)
+  eta = 1.08^min(time_since_last_update_ms / 1000, 1.0)
   A_hat(i) = eta * A_hat(i-1)]]></artwork>
         </figure>
 
-        <t>During the additive increase the estimate is increased with half an
-        average packet per response interval. The response interval is estimated
-        as the round-trip time plus 100 ms as an estimate of over-use estimator
-        and detector reaction time.</t>
+        <t>During the additive increase the estimate is increased with half a
+        packet per response_time interval. The response_time interval
+        is estimated as the round-trip time plus 100 ms as an estimate of
+        over-use estimator and detector reaction time.</t>
 
         <figure>
           <artwork><![CDATA[
-  beta = 0.5 * min(time_since_last_update / response_time, 1.0)
-  A_hat(i) = A_hat(i-1) + beta * avg_packet_size]]></artwork>
+  response_time_ms = 100 + rtt_ms
+  beta = 0.5 * min(time_since_last_update_ms / response_time_ms, 1.0)
+  A_hat(i) = A_hat(i-1) + max(1000, beta * expected_packet_size_bits)]]></artwork>
+        </figure>
+
+        <t>expected_packet_size_bits is used to get a slightly slower slope for
+        the additive increase at lower bitrates. It can for instance be computed
+        from the current bitrate by assuming a framerate of 30 frames per
+        second:</t>
+
+        <figure>
+          <artwork><![CDATA[
+  bits_per_frame = A_hat(i-1) / 30
+  packets_per_frame = ceil(bits_per_frame / (30 * 1200 * 8))
+  avg_packet_size_bits = bits_per_frame / packets_per_frame
+]]></artwork>
         </figure>
 
         <t>Since the system depends on over-using the channel to verify the
@@ -688,6 +702,9 @@
         as possible. This decrease of delay is wanted, and expected,
         immediately after the estimate has been reduced due to over-use, but
         can also happen if the cross traffic over some links is reduced.</t>
+
+        <t>It is recommended that the routine to update A_hat(i) is run at least
+        once every response_time interval.</t>
       </section>
     </section>
 
