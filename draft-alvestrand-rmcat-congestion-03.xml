@@ -713,34 +713,29 @@
           <c>State noise covariance matrix </c>
           <c>diag(Q(i)) = [10^-13 10^-3]^T</c>
 
-
           <c>E(0)</c>
           <c>Initial value of the  system error covariance</c>
           <c>diag(E(0)) = [100 10^-1]^T</c>
-
 
           <c>chi</c>
           <c>Coefficient used  for the measured noise variance</c>
           <c>[0.1, 0.001]</c>
 
-
           <c>gamma_1(0)</c>
           <c>Initial value for the adaptive threshold</c>
           <c>25 ms</c>
 
-          
           <c>gamma_2</c>
           <c>Time required to trigger an overuse signal</c>
           <c>10 ms</c>
 
           <c>K_u</c>
           <c>Coefficient for the adaptive threshold</c>
-          <c>0.06</c>
+          <c>0.006</c>
 
           <c>K_d</c>
           <c>Coefficient for the adaptive threshold</c>
-          <c>0.002</c>
-
+          <c>0.0002</c>
 
           <c>T</c>
           <c>Time window for measuring the received bitrate</c>
@@ -749,8 +744,6 @@
           <c>alpha</c>
           <c>Decrease rate factor</c>
           <c>0.85</c>
-
-
 
           <postamble>Table 1: RECOMMENDED values for delay based controller</postamble> 
         </texttable>
