@@ -464,7 +464,7 @@
   k_bar(i) = ---------------------------------------------------
              var_v_hat + h_bar(i)^T * (E(i-1) + Q(i)) * h_bar(i)
 
-  E(i) = (I - K_bar(i) * h_bar(i)^T) * ( E(i-1) + Q(i) )
+  E(i) = (I - K_bar(i) * h_bar(i)^T) * (E(i-1) + Q(i))
 ]]></artwork>
         </figure>
 
@@ -475,15 +475,15 @@
 
         <figure>
           <artwork><![CDATA[
-  var_v_hat = beta*sigma(v,i-1)^2 + (1-beta)*z(i)^2
+  var_v_hat = beta * sigma(v,i-1)^2 + (1-beta) * z(i)^2
 
-  beta = (1-alpha)^(30/(1000 * f_max))
+  beta = (1-chi)^(30/(1000 * f_max))
 ]]></artwork>
         </figure>
 
         <t>where f_max = max {1/(T(j) - T(j-1))} for j in i-K+1,...,i is the
         highest rate at which frames have been captured by the camera the last
-        K frames and alpha is a filter coefficient typically chosen as a
+        K frames and chi is a filter coefficient typically chosen as a
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
         should be zero mean WGN is less accurate in some cases, we have
         introduced an additional outlier filter around the updates of
@@ -686,7 +686,7 @@
 
         <figure>
           <artwork><![CDATA[
-  A_hat(i) = alpha*R_hat(i)]]></artwork>
+  A_hat(i) = alpha * R_hat(i)]]></artwork>
         </figure>
 
         <t>alpha is typically chosen to be in the interval [0.8, 0.95], 0.85
@@ -706,6 +706,67 @@
         <t>It is recommended that the routine to update A_hat(i) is run at least
         once every response_time interval.</t>
       </section>
+
+    
+    <section title="Parameters settings">
+
+       <texttable anchor="VACS_US">
+          <ttcol>Parameter</ttcol>
+
+          <ttcol>Description</ttcol>
+
+          <ttcol>RECOMMENDED Value</ttcol> 
+
+          <c>burst_time</c>
+          <c>Time limit in milliseconds between packet bursts which identifies a group</c>
+          <c>5 ms</c>
+
+          <c>Q</c>
+          <c>State noise covariance matrix </c>
+          <c>diag(Q(i)) = [10^-13 10^-3]^T</c>
+
+
+          <c>E(0)</c>
+          <c>Initial value of the  system error covariance</c>
+          <c>diag(E(0)) = [100 10^-1]^T</c>
+
+
+          <c>chi</c>
+          <c>Coefficient used  for the measured noise variance</c>
+          <c>[0.1, 0.001]</c>
+
+
+          <c>gamma_1(0)</c>
+          <c>Initial value for the adaptive threshold</c>
+          <c>25 ms</c>
+
+          
+          <c>gamma_2</c>
+          <c>Time required to trigger an overuse signal</c>
+          <c>10 ms</c>
+
+          <c>K_u</c>
+          <c>Coefficient for the adaptive threshold</c>
+          <c>0.06</c>
+
+          <c>K_d</c>
+          <c>Coefficient for the adaptive threshold</c>
+          <c>0.002</c>
+
+
+          <c>T</c>
+          <c>Time window for measuring the received bitrate</c>
+          <c>[0.5,1]s</c>
+
+          <c>alpha</c>
+          <c>Decrease rate factor</c>
+          <c>0.85</c>
+
+
+
+          <postamble>Table 1: RECOMMENDED values for delay based controller</postamble> 
+        </texttable>
+    </section>
     </section>
 
     <section anchor="lossbased" title="Loss-based control">
@@ -741,9 +802,9 @@
       estimate of the available bandwidth A_hat(i):</t>
 
       <figure>
-        <artwork><![CDATA[                               8 s
-As_hat(i) >= ----------------------------------------------------------
-         R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8) * p * (1+32*p^2)))
+        <artwork><![CDATA[                                      8 s
+As_hat(i) >= -------------------------------------------------------------
+              R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8) * p * (1+32*p^2)))
 
 As_hat(i) <= A_hat(i)
 
