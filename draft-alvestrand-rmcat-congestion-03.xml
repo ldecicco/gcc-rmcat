@@ -744,7 +744,7 @@
 
           <c>T</c>
           <c>Time window for measuring the received bitrate</c>
-          <c>[0.5,1]s</c>
+          <c>[0.5, 1] s</c>
 
           <c>alpha</c>
           <c>Decrease rate factor</c>
