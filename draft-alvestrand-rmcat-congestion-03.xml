@@ -871,11 +871,6 @@ As_hat(i) <= A_hat(i)
           <t>Considerations of locus of control: Move the algorithm logic to
           the sender and evaluate the performance compared to splitting logic
           between sender and receiver.</t>
-
-          <t>Considerations of over-bandwidth estimation: Whether we can use
-          the estimate of how much we are over bandwidth in section 3 to
-          influence how much we reduce the bandwidth, rather than using a
-          fixed factor.</t>
         </list></t>
     </section>
 
