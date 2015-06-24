@@ -723,7 +723,7 @@
 
           <c>gamma_1(0)</c>
           <c>Initial value for the adaptive threshold</c>
-          <c>25 ms</c>
+          <c>12.5 ms</c>
 
           <c>gamma_2</c>
           <c>Time required to trigger an overuse signal</c>
