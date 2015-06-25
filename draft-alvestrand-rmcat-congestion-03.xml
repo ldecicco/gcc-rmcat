@@ -821,43 +821,12 @@ As_hat(i) <= A_hat(i)
     </section>
 
     <section title="Interoperability Considerations">
-      <t>There are three scenarios of interest, and one included for
-      reference</t>
-
-      <t><list style="symbols">
-          <t>Both parties implement the algorithms described here</t>
-
-          <t>Sender implements the algorithm described in section <xref
-          target="lossbased"></xref>, recipient does not implement <xref
-          target="delaybased"></xref></t>
-
-          <t>Recipient implements the algorithm in section <xref
-          target="delaybased"></xref>, sender does not implement <xref
-          target="lossbased"></xref>.</t>
-        </list>
-        In the case where both parties implement the algorithms, we
-      expect to see most of the congestion control response to slowly varying
-      conditions happen by REMB messages from recipient to sender. At
-      most times, the sender will send less than the congestion-inducing
-      bandwidth limit C, and when he sends more, congestion will be detected
-      before packets are lost.</t>
-
-      <t>If sudden changes happen, packets will be lost, and the sender side
-      control will trigger, limiting traffic until the congestion becomes low
-      enough that the system switches back to the receiver-controlled
-      state.</t>
-
-      <t>In the case where sender only implements this algorithm, we expect
-      to see somewhat higher loss rates and delays, but the system will still
-      be overall TCP friendly and self-adjusting; the governing term in the calculation will be the TFRC formula.</t>
-
-      <t>In the case where the receiver implements this algorithm and sender does
-      not, congestion will be avoided for slow changes as long as the sender
-      understands and obeys REMB; there will be no backoff for
-      packet-loss-inducing changes in capacity. Given that some kind of
-      congestion control is mandatory for the sender according to the TMMBR
-      spec, this case has to be reevaluated against the specific congestion
-      control implemented by the sender.</t>
+      <t>In case a sender implementing these algorithms talks to a receiver
+      which do not implement any of the proposed RTCP messages and RTP header
+      extensions, it is suggested that the sender monitors RTCP receiver reports
+      and uses the fraction of lost packets and the round-trip time as input
+      to the loss-based controller. The delay-based controller should be left
+      disabled.</t>
     </section>
 
     <section title="Implementation Experience">
