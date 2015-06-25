@@ -129,8 +129,8 @@
       sender-based and one receiver-based.</t>
 
       <t>It is published as an input document to the RMCAT working group on
-      congestion control for media streams. The mailing list of that WG is
-      rmcat@ietf.org.</t>
+      congestion control for media streams. The mailing list of that working
+      group is rmcat@ietf.org.</t>
     </abstract>
 
     <note title="Requirements Language">
@@ -167,12 +167,14 @@
       and with TCP flows that share the same links.</t>
 
       <t>The signaling used consists of experimental RTP header extensions
-      and RTCP messages as defined in <xref target="abs-send-time"></xref>, <xref
-      target="I-D.alvestrand-rmcat-remb"></xref> and <xref target="I-D.holmer-rmcat-transport-wide-cc-extensions"/>.</t>
+      and RTCP messages <xref target="RFC3550">RFC 3550</xref> as defined in
+      <xref target="abs-send-time"></xref>,
+      <xref target="I-D.alvestrand-rmcat-remb"></xref> and
+      <xref target="I-D.holmer-rmcat-transport-wide-cc-extensions"/>.</t>
 
       <t></t>
 
-      <section title="Mathemathical notation conventions">
+      <section title="Mathematical notation conventions">
         <t>The mathematics of this document have been transcribed from a more
         formula-friendly format.</t>
 
@@ -215,7 +217,8 @@
           packets.</t>
 
           <t>RTP sender - sends the RTP stream over the network to the RTP
-          receiver. It generates the RTP timestamp.</t>
+          receiver. It generates the RTP timestamp and the abs-send-time header
+          extension</t>
 
           <t>RTP receiver - receives the RTP stream, marks the time of
           arrival.</t>
@@ -225,12 +228,12 @@
 
           <t>RTCP receiver at RTP sender - receives receiver reports and
           REMB messages and transport-wide RTCP feedback messages,
-          reports these to sender side controller.</t>
+          reports these to the sender side controller.</t>
 
           <t>RTCP receiver at RTP receiver.</t>
 
-          <t>Loss-based controller - takes loss rate info, round trip time info,
-          and REMB messages and computes a sending bitrate.</t>
+          <t>Loss-based controller - takes loss rate info, round trip time info
+          and REMB messages, and computes a target bitrate to send at.</t>
 
           <t>Delay-based controller - takes the packet arrival info, either at the
           RTP receiver, or from the feedback received by the RTP sender, and
@@ -276,8 +279,7 @@
       sender the bitrate in the REMB message and the fraction of packets lost
       are fed into the loss-based controller, which outputs a final target
       bitrate. It is RECOMMENDED to send the REMB message as soon as congestion
-      is detected if the delay-based controller runs on the receiver, and
-      otherwise at least once every second.</t>
+      is detected, and otherwise at least once every second.</t>
     </section>
 
     <section anchor="delaybased" title="Delay-based control">
@@ -291,16 +293,17 @@
         estimates of network parameters based on the timing of the received
         packets.</t>
 
-        <t>We define the inter-arrival time, t(i)-t(i-1), as the difference in
+        <t>We define the inter-arrival time, t(i) - t(i-1), as the difference in
         arrival time of two packets or two groups of packets. Correspondingly,
-        the inter-departure time, T(i)-T(i-1), is defined as the difference in 
-        departure-time of two packets or two groups of packets. Finally, the inter-group
-        delay variation, d(i), is defined as the difference between the
-        inter-arrival time and the inter-departure time. Or interpreted differently,
-        as the difference between the delay of group i and group i-1.</t>
+        the inter-departure time, T(i) - T(i-1), is defined as the difference in
+        departure-time of two packets or two groups of packets. Finally, the
+        inter-group delay variation, d(i), is defined as the difference between
+        the inter-arrival time and the inter-departure time. Or interpreted
+        differently, as the difference between the delay of group i and group
+        i-1.</t>
         <figure>
           <artwork><![CDATA[ 
-  d(i) = t(i)-t(i-1)-(T(i)-T(i-1))
+  d(i) = t(i) - t(i-1) - (T(i) - T(i-1))
 
 ]]></artwork>
         </figure>
@@ -309,17 +312,16 @@
         where a group of packets is defined as follows:</t>
 
         <t><list style="symbols">
-          <t>A sequence of packets which have inter-departure times which are less
-          than or equal to burst_time constitute a group. RECOMMENDED value for burst_time
-          is 5 ms.</t>
+          <t>A sequence of packets which are sent within a burst_time interval
+          constitute a group. RECOMMENDED value for burst_time is 5 ms.</t>
 
           <t>In addition, any packet which has an inter-arrival time less
-          than burst_time and an inter-group delay variation d(i) less than 0 is also
-          considered being part of the current group of packets. The reasoning
-          behind including these packets in the group is to better handle
-          delay transients, caused by packets being queued up for reasons
-          unrelated to congestion. As an example this can be seen to happen
-          on many Wi-Fi and wireless networks.</t>
+          than burst_time and an inter-group delay variation d(i) less than 0 is
+          also considered being part of the current group of packets. The
+          reasoning behind including these packets in the group is to better
+          handle delay transients, caused by packets being queued up for reasons
+          unrelated to congestion. As an example this has been observerd to
+          happen on many Wi-Fi and wireless networks.</t>
         </list></t>
 
         <t>An inter-departure time is computed between consecutive groups as
@@ -330,7 +332,7 @@
         <t>Each group is assigned a receive time t(i), which corresponds to
         the time at which the last packet of the group was received. A group
         is delayed relative to its predecessor if
-        t(i)-t(i-1)&gt;T(i)-T(i-1), i.e., if the inter-arrival time is
+        t(i) - t(i-1) &gt; T(i) - T(i-1), i.e., if the inter-arrival time is
         larger than the inter-departure time.</t>
 
         <t>Since the time ts to send a group of packets of size L over a path
@@ -347,7 +349,7 @@
         <figure>
           <artwork><![CDATA[ 
            L(i)-L(i-1)
-  d(i) = -------------- + w(i) = dL(i)/C + w(i)
+  d(i) = -------------- + w(i) = dL(i)/C(i) + w(i)
                C(i)
 
 ]]></artwork>
@@ -356,11 +358,11 @@
         <t>Here, w(i) is a sample from a stochastic process W, which is a
         function of the capacity C(i), the current cross traffic X(i), and the
         current sent bit rate R(i). We model W as a white Gaussian process. If
-        we are over-using the channel we expect w(i) to increase, and if a
-        queue on the network path is being emptied, w(i) will decrease;
-        otherwise the mean of w(i) will be zero.</t>
+        we are over-using the channel we expect the mean of w(i) to increase,
+        and if a queue on the network path is being emptied, the mean of w(i)
+        will decrease; otherwise the mean of w(i) will be zero.</t>
 
-        <t>Breaking out the mean m(i) from w(i) to make the process zero mean,
+        <t>Breaking out the mean, m(i), from w(i) to make the process zero mean,
         we get</t>
 
         <figure>
@@ -381,8 +383,8 @@
 
       <section title="Arrival-time filter">
         <t>The parameters d(i) and dL(i) are readily available for each group
-        of packets i &gt; 1, and we want to estimate C(i) and m(i) and use those
-        estimates to detect whether or not the bottleneck link is 
+        of packets, i &gt; 1, and we want to estimate C(i) and m(i) and use
+        those estimates to detect whether or not the bottleneck link is
         over-used. These parameters can be estimated by any
         adaptive filter &ndash; we are using the Kalman filter.</t>
 
@@ -406,8 +408,7 @@
         </figure>
 
         <t>where u_bar(i) is the state noise that we model as a stationary 
-          process with Gaussian statistic with a zero mean and a
-        covariance</t>
+        process with Gaussian statistic with zero mean and covariance</t>
 
         <t></t>
 
@@ -461,8 +462,8 @@
   theta_hat(i) = theta_hat(i-1) + z(i) * k_bar(i)
 
                     ( E(i-1) + Q(i) ) * h_bar(i)
-  k_bar(i) = ---------------------------------------------------
-             var_v_hat + h_bar(i)^T * (E(i-1) + Q(i)) * h_bar(i)
+  k_bar(i) = ------------------------------------------------------
+             var_v_hat(i) + h_bar(i)^T * (E(i-1) + Q(i)) * h_bar(i)
 
   E(i) = (I - K_bar(i) * h_bar(i)^T) * (E(i-1) + Q(i))
 ]]></artwork>
@@ -470,12 +471,12 @@
 
         <t>I is the 2-by-2 identity matrix.</t>
 
-        <t>The variance var_v = sigma(v,i)^2 is estimated using an exponential
-        averaging filter, modified for variable sampling rate</t>
+        <t>The variance var_v(i) = sigma_v(i)^2 is estimated using an
+        exponential averaging filter, modified for variable sampling rate</t>
 
         <figure>
           <artwork><![CDATA[
-  var_v_hat = beta * sigma(v,i-1)^2 + (1-beta) * z(i)^2
+  var_v_hat(i) = max(beta * var_v_hat(i-1) + (1-beta) * z(i)^2, 1)
 
   beta = (1-chi)^(30/(1000 * f_max))
 ]]></artwork>
@@ -520,11 +521,11 @@
         loss-based flows.</t>
         <t>For this reason, we propose to vary the threshold gamma_1(i) according
         to the following dynamic equation:</t>
-         <figure>
-           <artwork><![CDATA[
-  gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)| - gamma_1(i-1))
+        <figure>
+          <artwork><![CDATA[
+  gamma_1(i) = gamma_1(i-1) + (t(i) - t(i-1)) * K(i) * (|m(i)| - gamma_1(i-1))
 ]]></artwork>
-         </figure>
+        </figure>
         <t>with K(i)=K_d if |m(i)| &lt; gamma_1(i-1) or K(i)=K_u otherwise.
         The rationale is  to increase gamma_1(i) when m(i) is outside of the range
         [-gamma_1(i-1),gamma_1(i-1)], whereas, when the offset estimate m(i)
@@ -535,19 +536,25 @@
         the proposed algorithm <xref target="Pv13"/>. Moreover, gamma_1(i) SHOULD NOT
         be updated if this condition holds:</t>
         <figure>
-           <artwork><![CDATA[
+          <artwork><![CDATA[
   |m(i)| - gamma_1(i) > 15
 ]]></artwork>
-         </figure>
+        </figure>
 
-        <t>On the other hand, when m(i) falls back into the range [-gamma_1(i-1),gamma_1(i-1)]
-        the threshold gamma_1(i) is decreased so that a lower queuing delay can
-        be achieved.</t>
-        <t>It is RECOMMENDED to choose K_u &gt; K_d so that the rate at which gamma_1 is
-        increased is higher than the rate at which it is decreased. 
-        With this setting it is possible to increase the threshold in the case of
-        a concurrent TCP flow and prevent starvation as well as enforcing intra-protocol fairness.
-        RECOMMENDED values for gamma_1(0), gamma_2, K_u and K_d are respectively 25 ms, 10 ms, 0.006 and 0.0002.</t>
+        <t>It is also RECOMMENDED to clamp gamma_1(i) to the range [6, 600],
+        since a too small gamma_1(i) can cause the detector to become overly
+        sensitive.</t>
+
+        <t>On the other hand, when m(i) falls back into the range
+        [-gamma_1(i-1),gamma_1(i-1)] the threshold gamma_1(i) is decreased so
+        that a lower queuing delay can be achieved.</t>
+        <t>It is RECOMMENDED to choose K_u &gt; K_d so that the rate at which
+        gamma_1 is increased is higher than the rate at which it is decreased.
+        With this setting it is possible to increase the threshold in the case
+        of a concurrent TCP flow and prevent starvation as well as enforcing
+        intra-protocol fairness.
+        RECOMMENDED values for gamma_1(0), gamma_2, K_u and K_d are respectively
+        12.5 ms, 10 ms, 0.004 and 0.0001.</t>
       </section>
 
       <section title="Rate control">
@@ -621,7 +628,7 @@
         is RECOMMENDED.</t>
 
         <t>During multiplicative increase, the estimate is increased with 8%
-        per second. </t> 
+        per second.</t>
 
         <figure>
           <artwork><![CDATA[
@@ -715,7 +722,7 @@
 
           <c>E(0)</c>
           <c>Initial value of the  system error covariance</c>
-          <c>diag(E(0)) = [100 10^-1]^T</c>
+          <c>diag(E(0)) = [100 0.1]^T</c>
 
           <c>chi</c>
           <c>Coefficient used  for the measured noise variance</c>
@@ -731,11 +738,11 @@
 
           <c>K_u</c>
           <c>Coefficient for the adaptive threshold</c>
-          <c>0.006</c>
+          <c>0.004</c>
 
           <c>K_d</c>
           <c>Coefficient for the adaptive threshold</c>
-          <c>0.0002</c>
+          <c>0.0001</c>
 
           <c>T</c>
           <c>Time window for measuring the received bitrate</c>
@@ -771,11 +778,11 @@
           unchanged.</t>
 
           <t>If more than 10% of the packets have been lost a new estimate is
-          calculated as As_hat(i)=As_hat(i-1)(1-0.5p), where p is the loss
+          calculated as As_hat(i) = As_hat(i-1)(1-0.5p), where p is the loss
           ratio.</t>
 
           <t>As long as less than 2% of the packets have been lost As_hat(i)
-          will be increased as As_hat(i)=1.05(As_hat(i-1))</t>
+          will be increased as As_hat(i) = 1.05(As_hat(i-1))</t>
         </list></t>
 
       <t>The new bandwidth estimate is limited by the TCP Friendly Rate
@@ -784,8 +791,8 @@
 
       <figure>
         <artwork><![CDATA[                                      8 s
-As_hat(i) >= -------------------------------------------------------------
-              R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8) * p * (1+32*p^2)))
+As_hat(i) >= ------------------------------------------------------------
+             R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8) * p * (1+32*p^2)))
 
 As_hat(i) <= A_hat(i)
 
@@ -827,7 +834,8 @@ As_hat(i) <= A_hat(i)
           <t>Recipient implements the algorithm in section <xref
           target="delaybased"></xref>, sender does not implement <xref
           target="lossbased"></xref>.</t>
-        </list>In the case where both parties implement the algorithms, we
+        </list>
+        In the case where both parties implement the algorithms, we
       expect to see most of the congestion control response to slowly varying
       conditions happen by REMB messages from recipient to sender. At
       most times, the sender will send less than the congestion-inducing
@@ -910,10 +918,6 @@ As_hat(i) <= A_hat(i)
 
       <?rfc include='reference.RFC.3550'?>
 
-      <?rfc include='reference.RFC.5104'?>
-
-      <?rfc include='reference.RFC.5450'?>
-
       <?rfc include='reference.I-D.alvestrand-rmcat-remb'?>
 
       <?rfc include='reference.I-D.holmer-rmcat-transport-wide-cc-extensions'?>
@@ -928,8 +932,6 @@ As_hat(i) <= A_hat(i)
     </references>
 
     <references title="Informative References">
-      <?rfc include='reference.I-D.gharai-avtcore-rtp-tfrc'?>
-
       <?rfc include='reference.RFC.2914'?>
 
       <reference anchor='Pv13'> 
