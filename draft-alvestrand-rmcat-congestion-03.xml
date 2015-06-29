@@ -692,7 +692,7 @@
 
         <t>When the detector signals under-use to the rate control subsystem,
         we know that queues in the network path are being emptied, indicating
-        that our available bandwidth estimate is lower than the actual
+        that our available bandwidth estimate A_hat is lower than the actual
         available bandwidth. Upon that signal the rate control subsystem will
         enter the hold state, where the receive-side available bandwidth
         estimate will be held constant while waiting for the queues to
@@ -701,7 +701,7 @@
         immediately after the estimate has been reduced due to over-use, but
         can also happen if the cross traffic over some links is reduced.</t>
 
-        <t>It is recommended that the routine to update A_hat(i) is run at least
+        <t>It is RECOMMENDED that the routine to update A_hat(i) is run at least
         once every response_time interval.</t>
       </section>
 
