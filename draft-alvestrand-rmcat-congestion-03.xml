@@ -540,7 +540,7 @@
         of a concurrent TCP flow and prevent starvation as well as enforcing
         intra-protocol fairness.
         RECOMMENDED values for gamma_1(0), gamma_2, K_u and K_d are respectively
-        12.5 ms, 10 ms, 0.004 and 0.0001.</t>
+        12.5 ms, 10 ms, 0.01 and 0.00018.</t>
       </section>
 
       <section title="Rate control">
@@ -735,11 +735,11 @@
 
           <c>K_u</c>
           <c>Coefficient for the adaptive threshold</c>
-          <c>0.004</c>
+          <c>0.01</c>
 
           <c>K_d</c>
           <c>Coefficient for the adaptive threshold</c>
-          <c>0.0001</c>
+          <c>0.00018</c>
 
           <c>T</c>
           <c>Time window for measuring the received bitrate</c>
