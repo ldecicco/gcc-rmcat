@@ -465,11 +465,11 @@
   k_bar(i) = ------------------------------------------------------
              var_v_hat(i) + h_bar(i)^T * (E(i-1) + Q(i)) * h_bar(i)
 
-  E(i) = (I - K_bar(i) * h_bar(i)^T) * (E(i-1) + Q(i))
+  E(i) = (I - k_bar(i) * h_bar(i)^T) * (E(i-1) + Q(i))
 ]]></artwork>
         </figure>
 
-        <t>I is the 2-by-2 identity matrix.</t>
+        <t>where I is the 2-by-2 identity matrix.</t>
 
         <t>The variance var_v(i) = sigma_v(i)^2 is estimated using an
         exponential averaging filter, modified for variable sampling rate</t>
@@ -488,8 +488,8 @@
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
         should be zero mean WGN is less accurate in some cases, we have
         introduced an additional outlier filter around the updates of
-        var_v_hat. If z(i) &gt; 3 sqrt(var_v_hat) the filter is updated with 3
-        sqrt(var_v_hat) rather than z(i). For instance v(i) will not be white
+        var_v_hat. If z(i) &gt; 3*sqrt(var_v_hat) the filter is updated with 
+        3*sqrt(var_v_hat) rather than z(i). For instance v(i) will not be white
         in situations where packets are sent at a higher rate than the channel
         capacity, in which case they will be queued behind each other.</t>
       </section>
