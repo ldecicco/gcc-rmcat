@@ -233,8 +233,8 @@
           <t>RTCP receiver at RTP receiver, receives sender reports from
           the sender.</t>
 
-          <t>Loss-based controller - takes loss rate info, round trip time info
-          and REMB messages, and computes a target bitrate to send at.</t>
+          <t>Loss-based controller - takes loss rate measurement, round trip time measurement
+          and REMB messages, and computes a target sending bitrate.</t>
 
           <t>Delay-based controller - takes the packet arrival info, either at the
           RTP receiver, or from the feedback received by the RTP sender, and
@@ -466,11 +466,11 @@
   k_bar(i) = ------------------------------------------------------
              var_v_hat(i) + h_bar(i)^T * (E(i-1) + Q(i)) * h_bar(i)
 
-  E(i) = (I - K_bar(i) * h_bar(i)^T) * (E(i-1) + Q(i))
+  E(i) = (I - k_bar(i) * h_bar(i)^T) * (E(i-1) + Q(i))
 ]]></artwork>
         </figure>
 
-        <t>I is the 2-by-2 identity matrix.</t>
+        <t>where I is the 2-by-2 identity matrix.</t>
 
         <t>The variance var_v(i) = sigma_v(i)^2 is estimated using an
         exponential averaging filter, modified for variable sampling rate</t>
@@ -489,18 +489,20 @@
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
         should be zero mean WGN is less accurate in some cases, we have
         introduced an additional outlier filter around the updates of
-        var_v_hat. If z(i) &gt; 3 sqrt(var_v_hat) the filter is updated with 3
-        sqrt(var_v_hat) rather than z(i). For instance v(i) will not be white
+        var_v_hat. If z(i) &gt; 3*sqrt(var_v_hat) the filter is updated with 
+        3*sqrt(var_v_hat) rather than z(i). For instance v(i) will not be white
         in situations where packets are sent at a higher rate than the channel
         capacity, in which case they will be queued behind each other.</t>
       </section>
 
       <section title="Over-use detector">
-        <t>The offset estimate m(i) is compared with a threshold gamma_1(i). 
+        <t>The offset estimate m(i), obtained as the output of the arrival-time
+        filter, is compared with a threshold gamma_1(i). 
         An estimate above the threshold is considered as an indication of
         over-use. Such an indication is not enough for the detector to signal
-        over-use to the rate control subsystem. Not until over-use has been
-        detected for at least gamma_2 milliseconds a definitive over-use will be signaled.
+        over-use to the rate control subsystem. A definitive over-use will be
+        signaled only if over-use has been detected for at least gamma_2 
+        milliseconds.
         However, if m(i) &lt; m(i-1), over-use will not be
         signaled even if all the above conditions are met. Similarly, the
         opposite state, under-use, is detected when m(i) &lt; -gamma_1(i). If
@@ -516,7 +518,8 @@
         <t>The reason is that, by using a larger value of gamma_1, a larger 
         queuing delay can be tolerated, whereas with a small gamma_1, the 
         over-use detector quickly reacts to a small increase in the offset estimate m(i)
-        by generating an over-use signal that reduces A_r.
+        by generating an over-use signal that reduces the delay-based estimate
+        of the available bandwidth A_hat (see Section 4.4).
         Thus, it is necessary to dynamically tune the threshold gamma_1 to get good
         performance in the most common scenarios, such as when competing with 
         loss-based flows.</t>
@@ -701,7 +704,7 @@
 
         <t>When the detector signals under-use to the rate control subsystem,
         we know that queues in the network path are being emptied, indicating
-        that our available bandwidth estimate is lower than the actual
+        that our available bandwidth estimate A_hat is lower than the actual
         available bandwidth. Upon that signal the rate control subsystem will
         enter the hold state, where the receive-side available bandwidth
         estimate will be held constant while waiting for the queues to
@@ -710,7 +713,7 @@
         immediately after the estimate has been reduced due to over-use, but
         can also happen if the cross traffic over some links is reduced.</t>
 
-        <t>It is recommended that the routine to update A_hat(i) is run at least
+        <t>It is RECOMMENDED that the routine to update A_hat(i) is run at least
         once every response_time interval.</t>
       </section>
 
@@ -770,9 +773,11 @@
     </section>
 
     <section anchor="lossbased" title="Loss-based control">
-      <t>An second part of the congestion controller bases its decisions on the
-      round-trip time, packet loss and available bandwidth estimates received
-      from the delay-based controller.</t>
+      <t>A second part of the congestion controller bases its decisions on the
+      round-trip time, packet loss and available bandwidth estimates A_hat 
+      received from the delay-based controller. The available bandwidth 
+      estimates computed by the loss-based controller are denoted with As_hat.
+      </t>
 
       <t>The available bandwidth estimates A_hat produced by the delay-based
       controller are only reliable when the size of the queues along the path
@@ -786,8 +791,7 @@
       <t><list style="symbols">
           <t>If 2-10% of the packets have been lost since the previous report
           from the receiver, the sender available bandwidth estimate As_hat(i)
-          (As_hat denotes &lsquo;sender available bandwidth&rsquo;) will be kept
-          unchanged.</t>
+          will be kept unchanged.</t>
 
           <t>If more than 10% of the packets have been lost a new estimate is
           calculated as As_hat(i) = As_hat(i-1)(1-0.5p), where p is the loss
@@ -797,10 +801,10 @@
           will be increased as As_hat(i) = 1.05(As_hat(i-1))</t>
         </list></t>
 
-      <t>The new bandwidth estimate is limited by the TCP Friendly Rate
-      Control formula <xref target="RFC3448"></xref> and the delay-based
-      estimate of the available bandwidth A_hat(i), where the delay-based
-      estimate has precedence:</t>
+      <t>The new bandwidth estimate is lower-bounded by the TCP Friendly Rate
+      Control formula <xref target="RFC3448"></xref> and upper-bounded by 
+      the delay-based estimate of the available bandwidth A_hat(i),
+      where the delay-based estimate has precedence:</t>
 
       <figure>
         <artwork><![CDATA[                                      8 s
