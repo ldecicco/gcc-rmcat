@@ -342,8 +342,8 @@
         </figure>
 
         <t>Here, w(i) is a sample from a stochastic process W, which is a
-        function of the capacity C(i), the current cross traffic X(i), and the
-        current sent bitrate R(i). C is modeled as being constant as we expect
+        function of the capacity C(i), the current cross traffic, and the
+        current sent bitrate. C is modeled as being constant as we expect
         it to vary more slowly than other parameters of this model. We model W
         as a white Gaussian process. If we are over-using the channel we expect
         the mean of w(i) to increase, and if a queue on the network path is
