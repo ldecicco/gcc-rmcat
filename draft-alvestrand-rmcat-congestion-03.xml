@@ -16,22 +16,6 @@
     <title abbrev="Congestion Control for RTCWEB">A Google Congestion Control
     Algorithm for Real-Time Communication</title>
 
-    <author fullname="Henrik Lundin" initials="H." surname="Lundin">
-      <organization>Google</organization>
-
-      <address>
-        <postal>
-          <street>Kungsbron 2</street>
-
-          <code>11122</code>
-
-          <city>Stockholm</city>
-
-          <country>Sweden</country>
-        </postal>
-      </address>
-    </author>
-
     <author fullname="Stefan Holmer" initials="S." surname="Holmer">
       <organization>Google</organization>
 
@@ -49,6 +33,23 @@
         <email>holmer@google.com</email>
       </address>
     </author>
+
+    <author fullname="Henrik Lundin" initials="H." surname="Lundin">
+      <organization>Google</organization>
+
+      <address>
+        <postal>
+          <street>Kungsbron 2</street>
+
+          <code>11122</code>
+
+          <city>Stockholm</city>
+
+          <country>Sweden</country>
+        </postal>
+      </address>
+    </author>
+
     <author fullname="Gaetano Carlucci" initials="G." surname="Carlucci">
          <organization>Politecnico di Bari</organization> 
 
@@ -102,26 +103,7 @@
            </address> 
     </author>
 
-    <author fullname="Harald Alvestrand" initials="H. T."
-            surname="Alvestrand">
-      <organization>Google</organization>
-
-      <address>
-        <postal>
-          <street>Kungsbron 2</street>
-
-          <code>11122</code>
-
-          <city>Stockholm</city>
-
-          <country>Sweden</country>
-        </postal>
-
-        <email>harald@alvestrand.no</email>
-      </address>
-    </author>
-
-    <date day="19" month="August" year="2013" />
+    <date day="29" month="June" year="2015" />
 
     <abstract>
       <t>This document describes two methods of congestion control when using
@@ -489,7 +471,7 @@
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
         should be zero mean WGN is less accurate in some cases, we have
         introduced an additional outlier filter around the updates of
-        var_v_hat. If z(i) &gt; 3*sqrt(var_v_hat) the filter is updated with 
+        var_v_hat. If z(i) &gt; 3*sqrt(var_v_hat) the filter is updated with
         3*sqrt(var_v_hat) rather than z(i). For instance v(i) will not be white
         in situations where packets are sent at a higher rate than the channel
         capacity, in which case they will be queued behind each other.</t>
@@ -497,11 +479,11 @@
 
       <section title="Over-use detector">
         <t>The offset estimate m(i), obtained as the output of the arrival-time
-        filter, is compared with a threshold gamma_1(i). 
+        filter, is compared with a threshold gamma_1(i).
         An estimate above the threshold is considered as an indication of
         over-use. Such an indication is not enough for the detector to signal
         over-use to the rate control subsystem. A definitive over-use will be
-        signaled only if over-use has been detected for at least gamma_2 
+        signaled only if over-use has been detected for at least gamma_2
         milliseconds.
         However, if m(i) &lt; m(i-1), over-use will not be
         signaled even if all the above conditions are met. Similarly, the
@@ -774,8 +756,8 @@
 
     <section anchor="lossbased" title="Loss-based control">
       <t>A second part of the congestion controller bases its decisions on the
-      round-trip time, packet loss and available bandwidth estimates A_hat 
-      received from the delay-based controller. The available bandwidth 
+      round-trip time, packet loss and available bandwidth estimates A_hat
+      received from the delay-based controller. The available bandwidth
       estimates computed by the loss-based controller are denoted with As_hat.
       </t>
 
@@ -802,7 +784,7 @@
         </list></t>
 
       <t>The new bandwidth estimate is lower-bounded by the TCP Friendly Rate
-      Control formula <xref target="RFC3448"></xref> and upper-bounded by 
+      Control formula <xref target="RFC3448"></xref> and upper-bounded by
       the delay-based estimate of the available bandwidth A_hat(i),
       where the delay-based estimate has precedence:</t>
 
