@@ -232,8 +232,8 @@
 
           <t>RTCP receiver at RTP receiver.</t>
 
-          <t>Loss-based controller - takes loss rate info, round trip time info
-          and REMB messages, and computes a target bitrate to send at.</t>
+          <t>Loss-based controller - takes loss rate measurement, round trip time measurement
+          and REMB messages, and computes a target sending bitrate.</t>
 
           <t>Delay-based controller - takes the packet arrival info, either at the
           RTP receiver, or from the feedback received by the RTP sender, and
