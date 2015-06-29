@@ -102,7 +102,7 @@
            </address> 
     </author>
 
-    <author fullname="Harald Alvestrand" initials="H. T." role="editor"
+    <author fullname="Harald Alvestrand" initials="H. T."
             surname="Alvestrand">
       <organization>Google</organization>
 
@@ -126,7 +126,7 @@
     <abstract>
       <t>This document describes two methods of congestion control when using
       real-time communications on the World Wide Web (RTCWEB); one
-      sender-based and one receiver-based.</t>
+      delay-based and one loss-based.</t>
 
       <t>It is published as an input document to the RMCAT working group on
       congestion control for media streams. The mailing list of that working
@@ -230,7 +230,8 @@
           REMB messages and transport-wide RTCP feedback messages,
           reports these to the sender side controller.</t>
 
-          <t>RTCP receiver at RTP receiver.</t>
+          <t>RTCP receiver at RTP receiver, receives sender reports from
+          the sender.</t>
 
           <t>Loss-based controller - takes loss rate info, round trip time info
           and REMB messages, and computes a target bitrate to send at.</t>
@@ -258,9 +259,10 @@
       the RTP receiver will record the arrival time and the transport-wide
       sequence number of each received packet, which will be sent back to
       the sender periodically using the transport-wide feedback message. The
-      RECOMMENDED feedback interval is once per received video frame, but if the
-      feedback overhead needs to be limited this interval can be increased to
-      once every 100 ms.</t>
+      RECOMMENDED feedback interval is once per received video frame or at least
+      once every 30 ms if audio-only or multi-stream. If the feedback overhead
+      needs to be limited this interval can be increased to 100 ms.
+      </t>
 
       <t>The sender will map the received {sequence number, arrival time} pairs
       to the send-time of each packet covered by the feedback report, and feed
@@ -348,8 +350,10 @@
 
         <figure>
           <artwork><![CDATA[ 
+  d(i) = L(i)/C(i) - L(i-1)/C(i-1) + w(i) =
+
            L(i)-L(i-1)
-  d(i) = -------------- + w(i) = dL(i)/C(i) + w(i)
+       = -------------- + w(i) = dL(i)/C(i) + w(i)
                C(i)
 
 ]]></artwork>
@@ -357,17 +361,18 @@
 
         <t>Here, w(i) is a sample from a stochastic process W, which is a
         function of the capacity C(i), the current cross traffic X(i), and the
-        current sent bit rate R(i). We model W as a white Gaussian process. If
-        we are over-using the channel we expect the mean of w(i) to increase,
-        and if a queue on the network path is being emptied, the mean of w(i)
-        will decrease; otherwise the mean of w(i) will be zero.</t>
+        current sent bitrate R(i). C is modeled as being constant as we expect
+        it to vary more slowly than other parameters of this model. We model W
+        as a white Gaussian process. If we are over-using the channel we expect
+        the mean of w(i) to increase, and if a queue on the network path is
+        being emptied, the mean of w(i) will decrease; otherwise the mean of
+        w(i) will be zero.</t>
 
         <t>Breaking out the mean, m(i), from w(i) to make the process zero mean,
         we get</t>
 
         <figure>
-          <preamble>Equation 5</preamble>
-
+          <preamble>Equation 1</preamble>
           <artwork><![CDATA[
   d(i) = dL(i)/C(i) + m(i) + v(i)
 ]]></artwork>
@@ -413,10 +418,8 @@
         <t></t>
 
         <figure>
-          <preamble>Equation 7</preamble>
-
           <artwork><![CDATA[
-  Q(i) = E{u_bar(i) u_bar(i)^T}
+  Q(i) = E{u_bar(i) * u_bar(i)^T}
 ]]></artwork>
         </figure>
 
@@ -431,13 +434,11 @@
 
 
 
-        <t>Given equation 5 we get</t>
+        <t>Given equation 1 we get</t>
 
         <figure>
-          <preamble>Equation 8</preamble>
-
           <artwork><![CDATA[
-  d(i) = h_bar(i)^T theta_bar(i) + v(i)
+  d(i) = h_bar(i)^T * theta_bar(i) + v(i)
 
   h_bar(i) = [dL(i)  1]^T
 ]]></artwork>
@@ -559,10 +560,10 @@
 
       <section title="Rate control">
         <t>The rate control is split in two parts, one controlling the bandwidth
-        estimate based on delay, and one controlling the bandwidth estimate based
-        on loss. Both are designed to increase the estimate of the available 
-        bandwidth A_hat as long as there is no detected congestion. Doing that
-        ensures that we will eventually match the available bandwidth of the 
+        estimate based on delay, and one controlling the bandwidth estimate
+        based on loss. Both are designed to increase the estimate of the
+        available bandwidth A_hat as long as there is no detected congestion and
+        to ensure that we will eventually match the available bandwidth of the
         channel and detect an over-use.</t>
 
         <t>As soon as over-use has been detected, the available bandwidth estimated
@@ -610,11 +611,22 @@
         convergence, while it does an additive increase if it appears to
         be closer to convergence. We assume that we are close to convergence
         if the currently incoming bitrate, R_hat(i), is close to an average
-        of the incoming bitrates at the time when we were in the Decrease
-        state. "Close" is defined as three standard deviations around this
-        average.</t>
+        of the incoming bitrates at the time when we previously have been in
+        the Decrease state. "Close" is defined as three standard deviations
+        around this average. It is RECOMMENDED to measure this average and
+        standard deviation with an exponential moving average with the
+        smoothing factor 0.95, as it is expected that this average covers
+        multiple occasions at which we are in the Decrease state.
+        Whenever we don't have valid estimates of these statistics we
+        assume that we have not yet come close to convergence and therefore
+        remain in the multiplicative increase state.</t>
 
-        <t>R_hat(i) is the incoming bit rate measured by  the delay-based 
+        <t>If R_hat(i) increases above three standard deviations of the
+        average max bitrate, we assume that the current congestion level
+        has changed, at which point we reset the average max bitrate and
+        go back to the multiplicative increase state.</t>
+
+        <t>R_hat(i) is the incoming bitrate measured by the delay-based
         controller over a T seconds
         window:</t>
 
@@ -627,8 +639,8 @@
         is the payload size of packet j. A window between 0.5 and 1 second
         is RECOMMENDED.</t>
 
-        <t>During multiplicative increase, the estimate is increased with 8%
-        per second.</t>
+        <t>During multiplicative increase, the estimate is increased by
+        at most 8% per second.</t>
 
         <figure>
           <artwork><![CDATA[
@@ -636,8 +648,8 @@
   A_hat(i) = eta * A_hat(i-1)]]></artwork>
         </figure>
 
-        <t>During the additive increase the estimate is increased with half a
-        packet per response_time interval. The response_time interval
+        <t>During the additive increase the estimate is increased with at most
+        half a packet per response_time interval. The response_time interval
         is estimated as the round-trip time plus 100 ms as an estimate of
         over-use estimator and detector reaction time.</t>
 
@@ -656,7 +668,7 @@
         <figure>
           <artwork><![CDATA[
   bits_per_frame = A_hat(i-1) / 30
-  packets_per_frame = ceil(bits_per_frame / (30 * 1200 * 8))
+  packets_per_frame = ceil(bits_per_frame / (1200 * 8))
   avg_packet_size_bits = bits_per_frame / packets_per_frame
 ]]></artwork>
         </figure>
@@ -665,7 +677,7 @@
         current available bandwidth estimate, we must make sure that our
         estimate does not diverge from the rate at which the sender is actually
         sending. Thus, if the sender is unable to produce a bit stream with
-        the bit rate the congestion controller is asking for, the available
+        the bitrate the congestion controller is asking for, the available
         bandwidth estimate should stay within a given bound. Therefore we
         introduce a threshold</t>
 
@@ -677,7 +689,7 @@
 
         <t>When an over-use is detected the system transitions to the decrease
         state, where the delay-based available bandwidth estimate is
-        decreased to a factor times the currently incoming bit rate.</t>
+        decreased to a factor times the currently incoming bitrate.</t>
 
         <figure>
           <artwork><![CDATA[
@@ -787,7 +799,8 @@
 
       <t>The new bandwidth estimate is limited by the TCP Friendly Rate
       Control formula <xref target="RFC3448"></xref> and the delay-based
-      estimate of the available bandwidth A_hat(i):</t>
+      estimate of the available bandwidth A_hat(i), where the delay-based
+      estimate has precedence:</t>
 
       <figure>
         <artwork><![CDATA[                                      8 s
@@ -809,12 +822,13 @@ As_hat(i) <= A_hat(i)
 
       <t>In words: The loss-based estimate will never be larger than the
       delay-based estimate, and will never be lower than the estimate from
-      the TFRC formula.</t>
+      the TFRC formula except if the delay-based estimate is lower than
+      the TFRC estimate.</t>
 
       <t>We motivate the packet loss thresholds by noting that if the
       transmission channel has a small amount of packet loss due to over-use,
-      that amount will soon increase if the sender does not adjust his bit
-      rate. Therefore we will soon enough reach above the 10% threshold and
+      that amount will soon increase if the sender does not adjust his bitrate.
+      Therefore we will soon enough reach above the 10% threshold and
       adjust As_hat(i). However, if the packet loss ratio does not increase, the
       losses are probably not related to self-inflicted congestion and
       therefore we should not react on them.</t>
@@ -831,8 +845,17 @@ As_hat(i) <= A_hat(i)
 
     <section title="Implementation Experience">
       <t>This algorithm has been implemented in the open-source WebRTC
-      project, and has been in use in Chrome since M23, and is being used by
+      project, has been in use in Chrome since M23, and is being used by
       Google Hangouts.</t>
+
+      <t>Deployment of the algorithm have revealed problems related to, e.g,
+      congested or otherwise problematic WiFi networks, which have led to
+      algorithm improvements. The algorithm has also been tested in a
+      multi-party conference scenario with a conference server which
+      terminates the congestion control between endpoints. This ensures that
+      no assumptions are being made by the congestion control about maximum
+      send and receive bitrates, etc., which typically is out of control
+      for a conference server.</t>
     </section>
 
     <section title="Further Work">
@@ -845,9 +868,12 @@ As_hat(i) <= A_hat(i)
           <t>Considerations of integrated loss control: How loss and delay
           control can be better integrated, and the loss control improved.</t>
 
-          <t>Considerations of locus of control: Move the algorithm logic to
-          the sender and evaluate the performance compared to splitting logic
-          between sender and receiver.</t>
+          <t>Considerations of locus of control: evaluate the performance of
+          having all congestion control logic at the sender, compared to
+          splitting logic between sender and receiver.</t>
+
+          <t>Considerations of utilizing ECN as a signal for congestion
+          estimation and link over-use detection.</t>
         </list></t>
     </section>
 
@@ -1024,6 +1050,26 @@ As_hat(i) <= A_hat(i)
 
             <t>Added reference to a paper analyzing the behavior of the proposed
              algorithm.</t>
+          </list></t>
+      </section>
+
+
+      <section title="rmcat -02 to -03">
+        <t><list style="symbols">
+            <t>Swapped receiver-side/sender-side controller with
+            delay-based/loss-based controller as there is no longer a requirement
+            to run the delay-based controller on the receiver-side.</t>
+
+            <t>Removed the discussion about multiple streams and transmission time
+            offsets.</t>
+
+            <t>Introduced a new section about "Feedback and extensions".</t>
+
+            <t>Improvements to the threshold adaptation in the "Over-use detector"
+            section.</t>
+
+            <t>Swapped the previous MIMD rate control algorithm for a new AIMD
+            rate control algorithm.</t>
           </list></t>
       </section>
     </section>
