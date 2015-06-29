@@ -761,9 +761,11 @@
     </section>
 
     <section anchor="lossbased" title="Loss-based control">
-      <t>An second part of the congestion controller bases its decisions on the
-      round-trip time, packet loss and available bandwidth estimates received
-      from the delay-based controller.</t>
+      <t>A second part of the congestion controller bases its decisions on the
+      round-trip time, packet loss and available bandwidth estimates A_hat 
+      received from the delay-based controller. The available bandwidth 
+      estimates computed by the loss-based controller are denoted with As_hat.
+      </t>
 
       <t>The available bandwidth estimates A_hat produced by the delay-based
       controller are only reliable when the size of the queues along the path
@@ -777,8 +779,7 @@
       <t><list style="symbols">
           <t>If 2-10% of the packets have been lost since the previous report
           from the receiver, the sender available bandwidth estimate As_hat(i)
-          (As_hat denotes &lsquo;sender available bandwidth&rsquo;) will be kept
-          unchanged.</t>
+          will be kept unchanged.</t>
 
           <t>If more than 10% of the packets have been lost a new estimate is
           calculated as As_hat(i) = As_hat(i-1)(1-0.5p), where p is the loss
