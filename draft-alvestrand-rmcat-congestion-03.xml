@@ -156,7 +156,7 @@
 
       <t></t>
 
-      <section title="Mathematical notation conventions">
+      <section title="Mathematical notational conventions">
         <t>The mathematics of this document have been transcribed from a more
         formula-friendly format.</t>
 
@@ -304,7 +304,7 @@
           also considered being part of the current group of packets. The
           reasoning behind including these packets in the group is to better
           handle delay transients, caused by packets being queued up for reasons
-          unrelated to congestion. As an example this has been observerd to
+          unrelated to congestion. As an example this has been observed to
           happen on many Wi-Fi and wireless networks.</t>
         </list></t>
 
@@ -509,7 +509,7 @@
         to the following dynamic equation:</t>
         <figure>
           <artwork><![CDATA[
-  gamma_1(i) = gamma_1(i-1) + (t(i) - t(i-1)) * K(i) * (|m(i)| - gamma_1(i-1))
+gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
 ]]></artwork>
         </figure>
         <t>with K(i)=K_d if |m(i)| &lt; gamma_1(i-1) or K(i)=K_u otherwise.
@@ -647,7 +647,7 @@
 
         <t>expected_packet_size_bits is used to get a slightly slower slope for
         the additive increase at lower bitrates. It can for instance be computed
-        from the current bitrate by assuming a framerate of 30 frames per
+        from the current bitrate by assuming a frame rate of 30 frames per
         second:</t>
 
         <figure>
@@ -789,9 +789,9 @@
       where the delay-based estimate has precedence:</t>
 
       <figure>
-        <artwork><![CDATA[                                      8 s
-As_hat(i) >= ------------------------------------------------------------
-             R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8) * p * (1+32*p^2)))
+        <artwork><![CDATA[                                  8 s
+As_hat(i) >= ---------------------------------------------------------
+             R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8)*p*(1+32*p^2)))
 
 As_hat(i) <= A_hat(i)
 
