@@ -495,11 +495,13 @@
       </section>
 
       <section title="Over-use detector">
-        <t>The offset estimate m(i) is compared with a threshold gamma_1(i). 
+        <t>The offset estimate m(i), obtained as the output of the arrival-time
+        filter, is compared with a threshold gamma_1(i). 
         An estimate above the threshold is considered as an indication of
         over-use. Such an indication is not enough for the detector to signal
-        over-use to the rate control subsystem. Not until over-use has been
-        detected for at least gamma_2 milliseconds a definitive over-use will be signaled.
+        over-use to the rate control subsystem. A definitive over-use will be
+        signaled only if over-use has been detected for at least gamma_2 
+        milliseconds.
         However, if m(i) &lt; m(i-1), over-use will not be
         signaled even if all the above conditions are met. Similarly, the
         opposite state, under-use, is detected when m(i) &lt; -gamma_1(i). If
@@ -515,7 +517,8 @@
         <t>The reason is that, by using a larger value of gamma_1, a larger 
         queuing delay can be tolerated, whereas with a small gamma_1, the 
         over-use detector quickly reacts to a small increase in the offset estimate m(i)
-        by generating an over-use signal that reduces A_r.
+        by generating an over-use signal that reduces the delay-based estimate
+        of the available bandwidth A_hat (see Section 4.4).
         Thus, it is necessary to dynamically tune the threshold gamma_1 to get good
         performance in the most common scenarios, such as when competing with 
         loss-based flows.</t>
