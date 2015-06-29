@@ -602,7 +602,7 @@
         standard deviation with an exponential moving average with the
         smoothing factor 0.95, as it is expected that this average covers
         multiple occasions at which we are in the Decrease state.
-        Whenever we don't have valid estimates of these statistics we
+        Whenever valid estimates of these statistics are not available, we
         assume that we have not yet come close to convergence and therefore
         remain in the multiplicative increase state.</t>
 
