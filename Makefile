@@ -1,6 +1,6 @@
-DRAFTS =	draft-alvestrand-rmcat-congestion-03.txt \
-			draft-alvestrand-rmcat-congestion-03.html \
-			draft-alvestrand-rmcat-congestion-03.pdf
+DRAFTS =	draft-ietf-rmcat-gcc-00.txt \
+			draft-ietf-rmcat-gcc-00.html \
+			draft-ietf-rmcat-gcc-00.pdf
 CMDSEP = ;
 #VERSION = 00 
 
