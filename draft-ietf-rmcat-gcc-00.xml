@@ -10,7 +10,7 @@
 <?rfc inline="yes"?>
 <?rfc compact="yes"?>
 <?rfc subcompact="no"?>
-<rfc category="info" docName="draft-alvestrand-rmcat-congestion-03"
+<rfc category="info" docName="draft-ietf-rmcat-gcc-00"
      ipr="trust200902">
   <front>
     <title abbrev="Congestion Control for RTCWEB">A Google Congestion Control
@@ -103,7 +103,7 @@
            </address> 
     </author>
 
-    <date day="29" month="June" year="2015" />
+    <date day="8" month="September" year="2015" />
 
     <abstract>
       <t>This document describes two methods of congestion control when using
