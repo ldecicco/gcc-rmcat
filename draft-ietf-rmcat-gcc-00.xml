@@ -783,33 +783,11 @@ gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
           will be increased as As_hat(i) = 1.05(As_hat(i-1))</t>
         </list></t>
 
-      <t>The new bandwidth estimate is lower-bounded by the TCP Friendly Rate
-      Control formula <xref target="RFC3448"></xref> and upper-bounded by
-      the delay-based estimate of the available bandwidth A_hat(i),
-      where the delay-based estimate has precedence:</t>
-
-      <figure>
-        <artwork><![CDATA[                                  8 s
-As_hat(i) >= ---------------------------------------------------------
-             R*sqrt(2*b*p/3) + (t_RTO*(3*sqrt(3*b*p/8)*p*(1+32*p^2)))
-
-As_hat(i) <= A_hat(i)
-
-]]></artwork>
-      </figure>
-
-      <t>where b is the number of packets acknowledged by a single TCP
-      acknowledgment (set to 1 per TFRC recommendations), t_RTO is the TCP
-      retransmission timeout value in seconds (set to 4*R) and s is the
-      average packet size in bytes. R is the round-trip time in seconds.</t>
-
-      <t>(The multiplication by 8 comes because TFRC is computing bandwidth in
-      bytes, while this document computes bandwidth in bits.)</t>
-
-      <t>In words: The loss-based estimate will never be larger than the
-      delay-based estimate, and will never be lower than the estimate from
-      the TFRC formula except if the delay-based estimate is lower than
-      the TFRC estimate.</t>
+   
+      <t>The loss-based estimate As_hat is compared with the delay-based 
+      	 estimate A_hat. The actual sending rate is set as the minimum
+      	 between As_hat and A_hat.
+      </t>
 
       <t>We motivate the packet loss thresholds by noting that if the
       transmission channel has a small amount of packet loss due to over-use,
