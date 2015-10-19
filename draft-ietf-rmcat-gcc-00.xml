@@ -432,68 +432,68 @@
       </section>
 
       <section title="Over-use detector">
-        <t>The offset estimate m(i), obtained as the output of the arrival-time
-        filter, is compared with a threshold gamma_1(i).
+        <t>The inter-group delay variation estimate m(i), obtained as the output of the arrival-time
+        filter, is compared with a threshold del_var_th(i).
         An estimate above the threshold is considered as an indication of
         over-use. Such an indication is not enough for the detector to signal
         over-use to the rate control subsystem. A definitive over-use will be
-        signaled only if over-use has been detected for at least gamma_2
+        signaled only if over-use has been detected for at least overuse_time_th
         milliseconds.
         However, if m(i) &lt; m(i-1), over-use will not be
         signaled even if all the above conditions are met. Similarly, the
-        opposite state, under-use, is detected when m(i) &lt; -gamma_1(i). If
+        opposite state, under-use, is detected when m(i) &lt; -del_var_th(i). If
         neither over-use nor under-use is detected, the detector will be in
         the normal state.</t>
-        <t>The threshold gamma_1 has a remarkable impact on the overall dynamics 
+        <t>The threshold del_var_th has a remarkable impact on the overall dynamics 
         and performance of the algorithm. 
-        In particular, it has been shown that using a static threshold gamma_1,
+        In particular, it has been shown that using a static threshold del_var_th,
         a flow controlled by the proposed algorithm can be starved by a
         concurrent TCP flow <xref target="Pv13"/>. This starvation can be 
-        avoided by increasing the threshold gamma_1 to a sufficiently large 
+        avoided by increasing the threshold del_var_th to a sufficiently large 
         value.</t>
-        <t>The reason is that, by using a larger value of gamma_1, a larger 
-        queuing delay can be tolerated, whereas with a small gamma_1, the 
+        <t>The reason is that, by using a larger value of del_var_th, a larger 
+        queuing delay can be tolerated, whereas with a small del_var_th, the 
         over-use detector quickly reacts to a small increase in the offset estimate m(i)
         by generating an over-use signal that reduces the delay-based estimate
         of the available bandwidth A_hat (see Section 4.4).
-        Thus, it is necessary to dynamically tune the threshold gamma_1 to get good
+        Thus, it is necessary to dynamically tune the threshold del_var_th to get good
         performance in the most common scenarios, such as when competing with 
         loss-based flows.</t>
-        <t>For this reason, we propose to vary the threshold gamma_1(i) according
+        <t>For this reason, we propose to vary the threshold del_var_th(i) according
         to the following dynamic equation:</t>
         <figure>
           <artwork><![CDATA[
-gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
+del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1))
 ]]></artwork>
         </figure>
-        <t>with K(i)=K_d if |m(i)| &lt; gamma_1(i-1) or K(i)=K_u otherwise.
-        The rationale is  to increase gamma_1(i) when m(i) is outside of the range
-        [-gamma_1(i-1),gamma_1(i-1)], whereas, when the offset estimate m(i)
-        falls back into the range, gamma_1 is decreased. In this way when
+        <t>with K(i)=K_d if |m(i)| &lt; del_var_th(i-1) or K(i)=K_u otherwise.
+        The rationale is  to increase del_var_th(i) when m(i) is outside of the range
+        [-del_var_th(i-1),del_var_th(i-1)], whereas, when the offset estimate m(i)
+        falls back into the range, del_var_th is decreased. In this way when
         m(i) increases, for instance due to a TCP flow entering the same
-        bottleneck, gamma_1(i) increases and avoids the uncontrolled generation of
+        bottleneck, del_var_th(i) increases and avoids the uncontrolled generation of
         over-use signals which may lead to starvation of the flow controlled by
-        the proposed algorithm <xref target="Pv13"/>. Moreover, gamma_1(i) SHOULD NOT
+        the proposed algorithm <xref target="Pv13"/>. Moreover, del_var_th(i) SHOULD NOT
         be updated if this condition holds:</t>
         <figure>
           <artwork><![CDATA[
-  |m(i)| - gamma_1(i) > 15
+  |m(i)| - del_var_th(i) > 15
 ]]></artwork>
         </figure>
 
-        <t>It is also RECOMMENDED to clamp gamma_1(i) to the range [6, 600],
-        since a too small gamma_1(i) can cause the detector to become overly
+        <t>It is also RECOMMENDED to clamp del_var_th(i) to the range [6, 600],
+        since a too small del_var_th(i) can cause the detector to become overly
         sensitive.</t>
 
         <t>On the other hand, when m(i) falls back into the range
-        [-gamma_1(i-1),gamma_1(i-1)] the threshold gamma_1(i) is decreased so
+        [-del_var_th(i-1),del_var_th(i-1)] the threshold del_var_th(i) is decreased so
         that a lower queuing delay can be achieved.</t>
         <t>It is RECOMMENDED to choose K_u &gt; K_d so that the rate at which
-        gamma_1 is increased is higher than the rate at which it is decreased.
+        del_var_th is increased is higher than the rate at which it is decreased.
         With this setting it is possible to increase the threshold in the case
         of a concurrent TCP flow and prevent starvation as well as enforcing
         intra-protocol fairness.
-        RECOMMENDED values for gamma_1(0), gamma_2, K_u and K_d are respectively
+        RECOMMENDED values for del_var_th(0), overuse_time_th, K_u and K_d are respectively
         12.5 ms, 10 ms, 0.01 and 0.00018.</t>
       </section>
 
@@ -679,11 +679,11 @@ gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
           <c>Coefficient used  for the measured noise variance</c>
           <c>[0.1, 0.001]</c>
 
-          <c>gamma_1(0)</c>
+          <c>del_var_th(0)</c>
           <c>Initial value for the adaptive threshold</c>
           <c>12.5 ms</c>
 
-          <c>gamma_2</c>
+          <c>overuse_time_th</c>
           <c>Time required to trigger an overuse signal</c>
           <c>10 ms</c>
 
@@ -963,7 +963,7 @@ gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
             <t>Added Luca De Cicco and Saverio Mascolo as authors.</t>
 
             <t>Extended the "Over-use detector" section with new technical
-             details on how to dynamically tune the offset gamma_1 for improved
+             details on how to dynamically tune the offset del_var_th for improved
              fairness properties.</t>
 
             <t>Added reference to a paper analyzing the behavior of the proposed
