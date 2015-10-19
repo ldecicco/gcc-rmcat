@@ -820,8 +820,6 @@ del_var_th(i) =
     <references title="Normative References">
       <?rfc include="reference.RFC.2119"?>
 
-      <?rfc include='reference.RFC.3448'?>
-
       <?rfc include='reference.RFC.3550'?>
 
       <?rfc include='reference.I-D.alvestrand-rmcat-remb'?>
