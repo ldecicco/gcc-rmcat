@@ -1,6 +1,6 @@
-DRAFTS =	draft-ietf-rmcat-gcc-00.txt \
-			draft-ietf-rmcat-gcc-00.html \
-			draft-ietf-rmcat-gcc-00.pdf
+DRAFTS =	draft-ietf-rmcat-gcc-01.txt \
+			draft-ietf-rmcat-gcc-01.html \
+			draft-ietf-rmcat-gcc-01.pdf
 CMDSEP = ;
 #VERSION = 00 
 

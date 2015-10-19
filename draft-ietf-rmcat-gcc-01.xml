@@ -172,9 +172,6 @@
             <t hangText="X(i)">The "i"th value of vector X - conventionally marked by
             a subscript i.</t>
 
-            <t hangText="[x y z]">A row vector consisting of elements x, y and
-            z.</t>
-
             <t hangText="E{X}">The expected value of the stochastic variable
             X</t>
           </list></t>
@@ -372,7 +369,7 @@
 
         <figure>
           <artwork><![CDATA[
-  q(i) = E{u(i) * u(i)^T}
+  q(i) = E{u(i)^2}
 ]]></artwork>
         </figure>
 
@@ -387,7 +384,7 @@
         </figure>
 
         <t>where v(i) is zero mean white Gaussian measurement noise with
-        variance var_v = sigma(v,i)^2</t>
+        variance var_v = E{v(i)^2}</t>
 
         <t>The Kalman filter recursively updates our estimate m_hat(i) as</t>
 
@@ -405,7 +402,7 @@
 ]]></artwork>
         </figure>
 
-        <t>The variance var_v(i) = sigma_v(i)^2 is estimated using an
+        <t>The variance var_v(i) = E{v(i)^2} is estimated using an
         exponential averaging filter, modified for variable sampling rate</t>
 
         <figure>
