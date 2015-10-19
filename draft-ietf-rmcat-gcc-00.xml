@@ -165,9 +165,6 @@
         <t>The following notational conventions are used:</t>
 
         <t><list style="hanging">
-            <t hangText="X_bar">The variable X, where X is a vector -
-            conventionally marked by a bar on top of the variable name.</t>
-
             <t hangText="X_hat">An estimate of the true value of variable X -
             conventionally marked by a circumflex accent on top of the
             variable name.</t>
@@ -177,8 +174,6 @@
 
             <t hangText="[x y z]">A row vector consisting of elements x, y and
             z.</t>
-
-            <t hangText="X_bar^T">The transpose of vector X_bar.</t>
 
             <t hangText="E{X}">The expected value of the stochastic variable
             X</t>
@@ -288,11 +283,10 @@
         differently, as the difference between the delay of group i and group
         i-1.</t>
         <figure>
-          <artwork><![CDATA[ 
+          <artwork><![CDATA[
   d(i) = t(i) - t(i-1) - (T(i) - T(i-1))
-
 ]]></artwork>
-        </figure>
+        </figure>             
 
         <t>At the receiving side we are observing groups of incoming packets,
         where a group of packets is defined as follows:</t>
@@ -321,34 +315,18 @@
         t(i) - t(i-1) &gt; T(i) - T(i-1), i.e., if the inter-arrival time is
         larger than the inter-departure time.</t>
 
-        <t>Since the time ts to send a group of packets of size L over a path
-        with a capacity of C is roughly</t>
-
+       <t>We can model the inter-group delay variation as:</t>
         <figure>
           <artwork><![CDATA[
-  ts = L/C
+  d(i) = w(i)
 ]]></artwork>
-        </figure>
-
-        <t>we can model the inter-group delay variation as:</t>
-
-        <figure>
-          <artwork><![CDATA[ 
-  d(i) = L(i)/C(i) - L(i-1)/C(i-1) + w(i) =
-
-           L(i)-L(i-1)
-       = -------------- + w(i) = dL(i)/C(i) + w(i)
-               C(i)
-
-]]></artwork>
-        </figure>
+        </figure>        
 
         <t>Here, w(i) is a sample from a stochastic process W, which is a
-        function of the capacity C(i), the current cross traffic, and the
-        current sent bitrate. C is modeled as being constant as we expect
-        it to vary more slowly than other parameters of this model. We model W
-        as a white Gaussian process. If we are over-using the channel we expect
-        the mean of w(i) to increase, and if a queue on the network path is
+        function of the link capacity, the current cross traffic, and the
+        current sent bitrate. We model W as a white Gaussian process. 
+        If we are over-using the channel we expect the mean of w(i) to increase,
+        and if a queue on the network path is
         being emptied, the mean of w(i) will decrease; otherwise the mean of
         w(i) will be zero.</t>
 
@@ -358,112 +336,86 @@
         <figure>
           <preamble>Equation 1</preamble>
           <artwork><![CDATA[
-  d(i) = dL(i)/C(i) + m(i) + v(i)
+  d(i) = m(i) + v(i)
 ]]></artwork>
         </figure>
 
         <t>This is our fundamental model, where we take into account that a
         large group of packets need more time to traverse the link than a small
-        group, thus arriving with higher relative delay. The noise term
+        group, thus arriving with higher relative delay. The noise term v(i)
         represents network jitter and other delay effects not captured by the
         model.</t>
 
       </section>
 
       <section title="Arrival-time filter">
-        <t>The parameters d(i) and dL(i) are readily available for each group
-        of packets, i &gt; 1, and we want to estimate C(i) and m(i) and use
-        those estimates to detect whether or not the bottleneck link is
-        over-used. These parameters can be estimated by any
+        <t>The parameters d(i) is readily available for each group
+        of packets, i &gt; 1. We want to estimate m(i) and use
+        this estimate to detect whether or not the bottleneck link is
+        over-used. The parameter can be estimated by any
         adaptive filter &ndash; we are using the Kalman filter.</t>
 
-        <t>Let</t>
+        <t>Let m(i) be the estimate at time i</t>
 
-        <figure>
-          <artwork><![CDATA[
-  theta_bar(i) = [1/C(i)  m(i)]^T
-]]></artwork>
-        </figure>
-
-        <t>and call it the state at time i. We model the state evolution from
+        <t> We model the state evolution from
         time i to time i+1 as</t>
 
         <t></t>
 
         <figure>
           <artwork><![CDATA[
-  theta_bar(i+1) = theta_bar(i) + u_bar(i)
+  m(i+1) = m(i) + u(i)
 ]]></artwork>
         </figure>
 
-        <t>where u_bar(i) is the state noise that we model as a stationary 
-        process with Gaussian statistic with zero mean and covariance</t>
+        <t>where u(i) is the state noise that we model as a stationary 
+        process with Gaussian statistic with zero mean and variance</t>
 
         <t></t>
 
         <figure>
           <artwork><![CDATA[
-  Q(i) = E{u_bar(i) * u_bar(i)^T}
+  q(i) = E{u(i) * u(i)^T}
 ]]></artwork>
         </figure>
 
-        <t> Q(i) is RECOMMENDED as a diagonal matrix with main diagonal
-        elements as:</t>
-
-        <figure>
-          <artwork><![CDATA[
-  diag(Q(i)) = [10^-13 10^-3]^T
-]]></artwork>
-        </figure>
-
-
+        <t> q(i) is RECOMMENDED equal to 10^-3</t>
 
         <t>Given equation 1 we get</t>
 
         <figure>
           <artwork><![CDATA[
-  d(i) = h_bar(i)^T * theta_bar(i) + v(i)
-
-  h_bar(i) = [dL(i)  1]^T
+    d(i) = m(i) + v(i)
 ]]></artwork>
         </figure>
 
         <t>where v(i) is zero mean white Gaussian measurement noise with
         variance var_v = sigma(v,i)^2</t>
 
-        <t>The Kalman filter recursively updates our estimate</t>
+        <t>The Kalman filter recursively updates our estimate m_hat(i) as</t>
 
         <figure>
           <artwork><![CDATA[
-  theta_hat(i) = [1/C_hat(i) m_hat(i)]^T]]></artwork>
-        </figure>
+  z(i) = d(i) - m_hat(i-1)
 
-        <t>as</t>
+  m_hat(i) = m_hat(i-1) + z(i) * k(i)
 
-        <figure>
-          <artwork><![CDATA[
-  z(i) = d(i) - h_bar(i)^T * theta_hat(i-1)
+                     e(i-1) + q(i)
+  k(i) = ----------------------------------------
+             var_v_hat(i) + (e(i-1) + q(i))
 
-  theta_hat(i) = theta_hat(i-1) + z(i) * k_bar(i)
-
-                    ( E(i-1) + Q(i) ) * h_bar(i)
-  k_bar(i) = ------------------------------------------------------
-             var_v_hat(i) + h_bar(i)^T * (E(i-1) + Q(i)) * h_bar(i)
-
-  E(i) = (I - k_bar(i) * h_bar(i)^T) * (E(i-1) + Q(i))
+  e(i) = (1 - k(i)) * (e(i-1) + q(i))
 ]]></artwork>
         </figure>
-
-        <t>where I is the 2-by-2 identity matrix.</t>
 
         <t>The variance var_v(i) = sigma_v(i)^2 is estimated using an
         exponential averaging filter, modified for variable sampling rate</t>
 
         <figure>
           <artwork><![CDATA[
-  var_v_hat(i) = max(beta * var_v_hat(i-1) + (1-beta) * z(i)^2, 1)
+  var_v_hat(i) = max(alpha * var_v_hat(i-1) + (1-alpha) * z(i)^2, 1)
 
-  beta = (1-chi)^(30/(1000 * f_max))
+  alpha = (1-chi)^(30/(1000 * f_max))
 ]]></artwork>
         </figure>
 
@@ -643,8 +595,8 @@ gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
         <figure>
           <artwork><![CDATA[
   response_time_ms = 100 + rtt_ms
-  beta = 0.5 * min(time_since_last_update_ms / response_time_ms, 1.0)
-  A_hat(i) = A_hat(i-1) + max(1000, beta * expected_packet_size_bits)]]></artwork>
+  alpha = 0.5 * min(time_since_last_update_ms / response_time_ms, 1.0)
+  A_hat(i) = A_hat(i-1) + max(1000, alpha * expected_packet_size_bits)]]></artwork>
         </figure>
 
         <t>expected_packet_size_bits is used to get a slightly slower slope for
@@ -680,10 +632,10 @@ gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
 
         <figure>
           <artwork><![CDATA[
-  A_hat(i) = alpha * R_hat(i)]]></artwork>
+  A_hat(i) = beta * R_hat(i)]]></artwork>
         </figure>
 
-        <t>alpha is typically chosen to be in the interval [0.8, 0.95], 0.85
+        <t>beta is typically chosen to be in the interval [0.8, 0.95], 0.85
         is the RECOMMENDED value.</t>
 
         <t>When the detector signals under-use to the rate control subsystem,
@@ -715,13 +667,13 @@ gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
           <c>Time limit in milliseconds between packet bursts which identifies a group</c>
           <c>5 ms</c>
 
-          <c>Q</c>
+          <c>q</c>
           <c>State noise covariance matrix </c>
-          <c>diag(Q(i)) = [10^-13 10^-3]^T</c>
+          <c>q = 10^-3</c>
 
-          <c>E(0)</c>
+          <c>e(0)</c>
           <c>Initial value of the  system error covariance</c>
-          <c>diag(E(0)) = [100 0.1]^T</c>
+          <c>e(0) = 0.1</c>
 
           <c>chi</c>
           <c>Coefficient used  for the measured noise variance</c>
@@ -747,7 +699,7 @@ gamma_1(i) = gamma_1(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-gamma_1(i-1))
           <c>Time window for measuring the received bitrate</c>
           <c>[0.5, 1] s</c>
 
-          <c>alpha</c>
+          <c>beta</c>
           <c>Decrease rate factor</c>
           <c>0.85</c>
 
