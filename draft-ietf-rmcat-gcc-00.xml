@@ -53,7 +53,7 @@
     </author>
 
     <author fullname="Gaetano Carlucci" initials="G." surname="Carlucci">
-         <organization>Politecnico di Bari</organization> 
+         <organization>Politecnico di Bari</organization>
 
           <address>
             <postal>
@@ -67,10 +67,10 @@
             </postal>
 
             <email>gaetano.carlucci@poliba.it</email>
-           </address> 
+           </address>
     </author>
     <author fullname="Luca De Cicco" initials="L." surname="De Cicco">
-         <organization>Politecnico di Bari</organization> 
+         <organization>Politecnico di Bari</organization>
 
           <address>
             <postal>
@@ -84,11 +84,11 @@
             </postal>
 
             <email>l.decicco@poliba.it</email>
-           </address> 
+           </address>
     </author>
 
     <author fullname="Saverio Mascolo" initials="S." surname="Mascolo">
-         <organization>Politecnico di Bari</organization> 
+         <organization>Politecnico di Bari</organization>
 
           <address>
             <postal>
@@ -102,7 +102,7 @@
             </postal>
 
             <email>mascolo@poliba.it</email>
-           </address> 
+           </address>
     </author>
 
     <date day="8" month="September" year="2015" />
@@ -146,7 +146,7 @@
           real-time requirement precludes the repair of packet loss by
           retransmission</t>
         </list>This memo describes two congestion control algorithms that
-      together are able to provide good performance and reasonable 
+      together are able to provide good performance and reasonable
       bandwidth sharing with other video flows using the same congestion control
       and with TCP flows that share the same links.</t>
 
@@ -286,7 +286,7 @@
           <artwork><![CDATA[
   d(i) = t(i) - t(i-1) - (T(i) - T(i-1))
 ]]></artwork>
-        </figure>             
+        </figure>
 
         <t>At the receiving side we are observing groups of incoming packets,
         where a group of packets is defined as follows:</t>
@@ -320,11 +320,11 @@
           <artwork><![CDATA[
   d(i) = w(i)
 ]]></artwork>
-        </figure>        
+        </figure>
 
         <t>Here, w(i) is a sample from a stochastic process W, which is a
         function of the link capacity, the current cross traffic, and the
-        current sent bitrate. We model W as a white Gaussian process. 
+        current sent bitrate. We model W as a white Gaussian process.
         If we are over-using the channel we expect the mean of w(i) to increase,
         and if a queue on the network path is
         being emptied, the mean of w(i) will decrease; otherwise the mean of
@@ -368,7 +368,7 @@
 ]]></artwork>
         </figure>
 
-        <t>where u(i) is the state noise that we model as a stationary 
+        <t>where u(i) is the state noise that we model as a stationary
         process with Gaussian statistic with zero mean and variance</t>
 
         <t></t>
@@ -420,7 +420,7 @@
         </figure>
 
         <t>where f_max = max {1/(T(j) - T(j-1))} for j in i-K+1,...,i is the
-        highest rate at which the last K packet groups have been received 
+        highest rate at which the last K packet groups have been received
         and chi is a filter coefficient typically chosen as a
         number in the interval [0.1, 0.001]. Since our assumption that v(i)
         should be zero mean WGN is less accurate in some cases, we have
@@ -444,20 +444,20 @@
         opposite state, under-use, is detected when m(i) &lt; -del_var_th(i). If
         neither over-use nor under-use is detected, the detector will be in
         the normal state.</t>
-        <t>The threshold del_var_th has a remarkable impact on the overall dynamics 
-        and performance of the algorithm. 
+        <t>The threshold del_var_th has a remarkable impact on the overall dynamics
+        and performance of the algorithm.
         In particular, it has been shown that using a static threshold del_var_th,
         a flow controlled by the proposed algorithm can be starved by a
-        concurrent TCP flow <xref target="Pv13"/>. This starvation can be 
-        avoided by increasing the threshold del_var_th to a sufficiently large 
+        concurrent TCP flow <xref target="Pv13"/>. This starvation can be
+        avoided by increasing the threshold del_var_th to a sufficiently large
         value.</t>
-        <t>The reason is that, by using a larger value of del_var_th, a larger 
-        queuing delay can be tolerated, whereas with a small del_var_th, the 
+        <t>The reason is that, by using a larger value of del_var_th, a larger
+        queuing delay can be tolerated, whereas with a small del_var_th, the
         over-use detector quickly reacts to a small increase in the offset estimate m(i)
         by generating an over-use signal that reduces the delay-based estimate
         of the available bandwidth A_hat (see Section 4.4).
         Thus, it is necessary to dynamically tune the threshold del_var_th to get good
-        performance in the most common scenarios, such as when competing with 
+        performance in the most common scenarios, such as when competing with
         loss-based flows.</t>
         <t>For this reason, we propose to vary the threshold del_var_th(i) according
         to the following dynamic equation:</t>
@@ -527,8 +527,8 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
         <figure>
           <artwork><![CDATA[+----+--------+-----------+------------+--------+
 |     \ State |   Hold    |  Increase  |Decrease|
-|      \      |           |            |        | 
-| Signal\     |           |            |        | 
+|      \      |           |            |        |
+| Signal\     |           |            |        |
 +--------+----+-----------+------------+--------+
 |  Over-use   | Decrease  |  Decrease  |        |
 +-------------+-----------+------------+--------+
@@ -653,7 +653,6 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
         once every response_time interval.</t>
       </section>
 
-    
     <section title="Parameters settings">
 
        <texttable anchor="VACS_US">
@@ -661,7 +660,7 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
 
           <ttcol>Description</ttcol>
 
-          <ttcol>RECOMMENDED Value</ttcol> 
+          <ttcol>RECOMMENDED Value</ttcol>
 
           <c>burst_time</c>
           <c>Time limit in milliseconds between packet bursts which identifies a group</c>
@@ -703,7 +702,7 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
           <c>Decrease rate factor</c>
           <c>0.85</c>
 
-          <postamble>Table 1: RECOMMENDED values for delay based controller</postamble> 
+          <postamble>Table 1: RECOMMENDED values for delay based controller</postamble>
         </texttable>
     </section>
     </section>
@@ -737,8 +736,7 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
           will be increased as As_hat(i) = 1.05(As_hat(i-1))</t>
         </list></t>
 
-   
-      <t>The loss-based estimate As_hat is compared with the delay-based 
+      <t>The loss-based estimate As_hat is compared with the delay-based
       	 estimate A_hat. The actual sending rate is set as the minimum
       	 between As_hat and A_hat.
       </t>
@@ -805,8 +803,8 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
     <section anchor="Security" title="Security Considerations">
       <t>An attacker with the ability to insert or remove messages on the
       connection would have the ability to disrupt rate control.
-      This could make the algorithm to produce either a sending rate 
-      under-utilizing the bottleneck link capacity, or a too high sending rate  
+      This could make the algorithm to produce either a sending rate
+      under-utilizing the bottleneck link capacity, or a too high sending rate
       causing network congestion.</t>
 
       <t>In this case, the control information is carried inside RTP, and can
@@ -847,11 +845,11 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
     <references title="Informative References">
       <?rfc include='reference.RFC.2914'?>
 
-      <reference anchor='Pv13'> 
-        <front> 
-          <title abbrev='Pv13'>Understanding the Dynamic Behaviour of the Google Congestion Control</title> 
-          <author initials='L.' surname='De Cicco' fullname='Luca De Cicco'> 
-            <organization>Politecnico di Bari</organization> 
+      <reference anchor='Pv13'>
+        <front>
+          <title abbrev='Pv13'>Understanding the Dynamic Behaviour of the Google Congestion Control</title>
+          <author initials='L.' surname='De Cicco' fullname='Luca De Cicco'>
+            <organization>Politecnico di Bari</organization>
             <address>
               <postal>
                 <street>Via Orabona, 4</street>
@@ -860,9 +858,9 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
               </postal>
               <phone>+39 080 596 3851</phone>
               <email>l.decicco@poliba.it</email>
-             </address> 
-          </author> 
-          <author initials='G.' surname='Carlucci' fullname='Gaetano Carlucci'> 
+             </address>
+          </author>
+          <author initials='G.' surname='Carlucci' fullname='Gaetano Carlucci'>
             <organization>Politecnico di Bari</organization>
             <address>
               <postal>
@@ -872,10 +870,10 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
               </postal>
               <phone>+39 080 596 3851</phone>
               <email>g.carlucci@poliba.it</email>
-             </address> 
-          </author> 
+             </address>
+          </author>
           <author initials='S.' surname='Mascolo' fullname='Saverio Mascolo'>
-            <organization>Politecnico di Bari</organization> 
+            <organization>Politecnico di Bari</organization>
             <address>
               <postal>
                 <street>Via Orabona, 4</street>
@@ -884,14 +882,14 @@ del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1)
               </postal>
               <phone>+39 080 596 3621</phone>
               <email>mascolo@poliba.it</email>
-             </address> 
-          </author> 
+             </address>
+          </author>
           <date year='2013' month='December' />
           <area>General</area>
-        </front> 
+        </front>
         <seriesInfo name="Packet Video Workshop" value="" />
-        <format type="PDF" target="http://c3lab.poliba.it/images/c/ce/Gcc-pv-2013.pdf"/> 
-      </reference> 
+        <format type="PDF" target="http://c3lab.poliba.it/images/c/ce/Gcc-pv-2013.pdf"/>
+      </reference>
 
     </references>
 
