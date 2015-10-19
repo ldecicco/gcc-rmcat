@@ -340,11 +340,8 @@
 ]]></artwork>
         </figure>
 
-        <t>This is our fundamental model, where we take into account that a
-        large group of packets need more time to traverse the link than a small
-        group, thus arriving with higher relative delay. The noise term v(i)
-        represents network jitter and other delay effects not captured by the
-        model.</t>
+        <t>The noise term v(i) represents network jitter and other delay 
+          effects not captured by the model.</t>
 
       </section>
 
