@@ -460,7 +460,8 @@
         to the following dynamic equation:</t>
         <figure>
           <artwork><![CDATA[
-del_var_th(i) = del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1))
+del_var_th(i) = 
+         del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1))
 ]]></artwork>
         </figure>
         <t>with K(i)=K_d if |m(i)| &lt; del_var_th(i-1) or K(i)=K_u otherwise.
