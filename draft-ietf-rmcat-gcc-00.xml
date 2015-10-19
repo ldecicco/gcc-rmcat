@@ -10,7 +10,7 @@
 <?rfc inline="yes"?>
 <?rfc compact="yes"?>
 <?rfc subcompact="no"?>
-<rfc category="info" docName="draft-ietf-rmcat-gcc-00"
+<rfc category="info" docName="draft-ietf-rmcat-gcc-01"
      ipr="trust200902">
   <front>
     <title abbrev="Congestion Control for RTCWEB">A Google Congestion Control
@@ -105,7 +105,7 @@
            </address>
     </author>
 
-    <date day="8" month="September" year="2015" />
+    <date day="19" month="October" year="2015" />
 
     <abstract>
       <t>This document describes two methods of congestion control when using
@@ -346,7 +346,7 @@
       </section>
 
       <section title="Arrival-time filter">
-        <t>The parameters d(i) is readily available for each group
+        <t>The parameter d(i) is readily available for each group
         of packets, i &gt; 1. We want to estimate m(i) and use
         this estimate to detect whether or not the bottleneck link is
         over-used. The parameter can be estimated by any
@@ -967,7 +967,6 @@ del_var_th(i) =
           </list></t>
       </section>
 
-
       <section title="rmcat -02 to -03">
         <t><list style="symbols">
             <t>Swapped receiver-side/sender-side controller with
@@ -985,6 +984,17 @@ del_var_th(i) =
             <t>Swapped the previous MIMD rate control algorithm for a new AIMD
             rate control algorithm.</t>
           </list></t>
+      </section>
+
+      <section title="ietf-rmcat -00 to ietf-rmcat -01">
+        <t><list style="symbols">
+          <t>Arrival-time filter converted from a two dimensional Kalman filter
+          to a scalar Kalman filter.</t>
+
+          <t>The use of the TFRC equation was removed from the loss-based
+          controller, as it turned out to have little to no effect in
+          practice.</t>
+        </list></t>
       </section>
     </section>
   </back>
