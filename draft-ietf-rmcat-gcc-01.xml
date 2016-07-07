@@ -184,7 +184,7 @@
       <t><list style="symbols">
           <t>RTP packet - an RTP packet containing media data.</t>
 
-          <t>Packet group - a set of RTP packets transmitted from the sender uniquely
+          <t>Group of packets - a set of RTP packets transmitted from the sender uniquely
           identified by the group departure and group arrival time (absolute send time)
           <xref target="abs-send-time"></xref>. These could be video packets, audio packets,
           or a mix of audio and video packets.</t>
@@ -260,21 +260,32 @@
       is detected, and otherwise at least once every second.</t>
     </section>
 
+
+    <section anchor="sending" title="Sending Engine">
+    <t> Pacing is used to actuate the target bitrate computed by the controllers.</t>
+
+    <t>When media encoder produces data, this is fed into a Pacer queue. The Pacer sends a group of packets 
+      to the network every burst_time interval. RECOMMENDED value for burst_time is 5 ms.
+      The size of a group of packets is computed as the product between the target bitrate and
+      the burst_time.</t>
+    </section>
+
+
     <section anchor="delaybased" title="Delay-based control">
-      <t>The delay-based control algorithm can be further decomposed into three parts:
-      an arrival-time filter, an over-use detector, and a rate controller.</t>
+      <t>The delay-based control algorithm can be further decomposed into four parts:
+      a pre-filtering, an arrival-time filter, an over-use detector, and a rate controller.</t>
 
       <t></t>
 
       <section title="Arrival-time model">
         <t>This section describes an adaptive filter that continuously updates
         estimates of network parameters based on the timing of the received
-        packets.</t>
+        groups of packets.</t>
 
         <t>We define the inter-arrival time, t(i) - t(i-1), as the difference in
-        arrival time of two packets or two groups of packets. Correspondingly,
-        the inter-departure time, T(i) - T(i-1), is defined as the difference in
-        departure-time of two packets or two groups of packets. Finally, the
+        arrival time of two groups of packets. Correspondingly, the inter-departure time,
+        T(i) - T(i-1), is defined as the difference in
+        departure-time of two groups of packets. Finally, the
         inter-group delay variation, d(i), is defined as the difference between
         the inter-arrival time and the inter-departure time. Or interpreted
         differently, as the difference between the delay of group i and group
@@ -284,22 +295,6 @@
   d(i) = t(i) - t(i-1) - (T(i) - T(i-1))
 ]]></artwork>
         </figure>
-
-        <t>At the receiving side we are observing groups of incoming packets,
-        where a group of packets is defined as follows:</t>
-
-        <t><list style="symbols">
-          <t>A sequence of packets which are sent within a burst_time interval
-          constitute a group. RECOMMENDED value for burst_time is 5 ms.</t>
-
-          <t>In addition, any packet which has an inter-arrival time less
-          than burst_time and an inter-group delay variation d(i) less than 0 is
-          also considered being part of the current group of packets. The
-          reasoning behind including these packets in the group is to better
-          handle delay transients, caused by packets being queued up for reasons
-          unrelated to congestion. As an example this has been observed to
-          happen on many Wi-Fi and wireless networks.</t>
-        </list></t>
 
         <t>An inter-departure time is computed between consecutive groups as
         T(i) - T(i-1), where T(i) is the departure timestamp of the last packet
@@ -339,6 +334,26 @@
 
         <t>The noise term v(i) represents network jitter and other delay 
           effects not captured by the model.</t>
+
+      </section>
+
+      <section title="Pre filtering">
+        <t>The pre-filtering aims at handling delay transients cause by channel outages. 
+          During a outage, packets being queued in network buffers, for reasons
+          unrelated to congestion, are delivered in a burst when the outage ends.</t>
+        <t>
+          The pre-filtering merges together groups of packets that arrive in a burst.
+          Packets are merged in the same group whether one of these two conditions holds:
+        </t>
+
+        <t><list style="symbols">
+        <t>A sequence of packets which are sent within a burst_time interval
+          constitute a group.</t>
+
+          <t>A Packet which has an inter-arrival time less
+          than burst_time and an inter-group delay variation d(i) less than 0 is
+          considered being part of the current group of packets.</t>
+        </list></t>
 
       </section>
 
