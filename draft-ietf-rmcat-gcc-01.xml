@@ -338,12 +338,12 @@
       </section>
 
       <section title="Pre filtering">
-        <t>The pre-filtering aims at handling delay transients cause by channel outages. 
-          During a outage, packets being queued in network buffers, for reasons
+        <t>The pre-filtering aims at handling delay transients caused by channel outages. 
+          During an outage, packets being queued in network buffers, for reasons
           unrelated to congestion, are delivered in a burst when the outage ends.</t>
         <t>
           The pre-filtering merges together groups of packets that arrive in a burst.
-          Packets are merged in the same group whether one of these two conditions holds:
+          Packets are merged in the same group if one of these two conditions holds:
         </t>
 
         <t><list style="symbols">
