@@ -264,7 +264,7 @@
     <section anchor="sending" title="Sending Engine">
     <t> Pacing is used to actuate the target bitrate computed by the controllers.</t>
 
-    <t>When media encoder produces data, this is fed into a Pacer queue. The Pacer sends a group of packets 
+    <t>When media encoder produces data, this is fed into a Pacer queue. The Pacer sends a group of packets
       to the network every burst_time interval. RECOMMENDED value for burst_time is 5 ms.
       The size of a group of packets is computed as the product between the target bitrate and
       the burst_time.</t>
@@ -332,13 +332,13 @@
 ]]></artwork>
         </figure>
 
-        <t>The noise term v(i) represents network jitter and other delay 
+        <t>The noise term v(i) represents network jitter and other delay
           effects not captured by the model.</t>
 
       </section>
 
-      <section title="Pre filtering">
-        <t>The pre-filtering aims at handling delay transients caused by channel outages. 
+      <section title="Pre-filtering">
+        <t>The pre-filtering aims at handling delay transients caused by channel outages.
           During an outage, packets being queued in network buffers, for reasons
           unrelated to congestion, are delivered in a burst when the outage ends.</t>
         <t>
@@ -472,7 +472,7 @@
         to the following dynamic equation:</t>
         <figure>
           <artwork><![CDATA[
-del_var_th(i) = 
+del_var_th(i) =
          del_var_th(i-1) + (t(i)-t(i-1)) * K(i) * (|m(i)|-del_var_th(i-1))
 ]]></artwork>
         </figure>
@@ -1006,6 +1006,13 @@ del_var_th(i) =
           practice.</t>
         </list></t>
       </section>
+
+      <section title="ietf-rmcat -01 to ietf-rmcat -02">
+        <t><list style="symbols">
+          <t>Added a section which better describes the pre-filtering algorithm.</t>
+        </list></t>
+      </section>
+
     </section>
   </back>
 </rfc>
